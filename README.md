@@ -1,3 +1,4 @@
-# covid-19-vaccination-management-system
-*Covid-19 Vaccination Management System
-*Python 3 and above
+## SYSTEM
+# CVMS (Covid-19 Vaccination Management System)
+## Requirements
+-`Python 3 and above`

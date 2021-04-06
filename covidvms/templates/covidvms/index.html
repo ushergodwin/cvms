@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/fontawesome/css/all.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/cvmscss/cvms.css' %}">
+    <style type="text/css">
+        body{
+            background-image: url("{% static 'assets/images/file-20200324-155695-1kaxgif.jpg' %}");
+            background-repeat: repeat-x;
+        }
+        .no-js #loader { display: none;  }
+.js #loader { display: block; position: absolute; left: 100px; top: 0; }
+.se-pre-con {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url("{% static 'assets/images/Preloader_2.gif' %}") center no-repeat #fff;
+}
+    </style>
+    <script src="{% static 'assets/bootstrap/js/jquery-3.5.1.min.js' %}"></script>
+</head>
+<body>
+<div class="se-pre-con"></div>
+<main class="container">
+    <br/>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-12 col-lg-8 col-xl-8">
+        <div class="card card-body shadow">
+            <br/>
+            <div class="row">
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <h4 class="font-weight-bold">LOGIN</h4>
+                    <br/>
+                    <form action="{% url 'covidvms:login' %}" method="post" id="loginForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="email" class="sr-only">Email</label>
+                            <i class="fas fa-envelope text-primary"></i> <input type="email" name="email" class="form-control-custom" placeholder="user email address" autocomplete="off" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="password" class="sr-only">Password</label>
+                            <div class="input-group">
+                                <i class="fas fa-lock text-primary"></i> &nbsp;&nbsp;
+                                <a href="javascript:void(0)" class="text-primary" id="show-password"><i class="fas fa-eye text-primary"></i></a>
+                                <a href="javascript:void(0)" class="text-primary d-none" id="hide-password"><i class="fas fa-eye-slash text-primary"></i></a>
+                            </div>
+                            <input type="password" name="password" id="password" placeholder="password" class="form-control-custom" autocomplete="off" required/>
+                        </div>
+                        <div class="form-group">
+                            <label for="login" class="sr-only">Login</label>
+                            <input type="hidden" name="login" value="1"/>
+                            <button type="submit" class="btn btn-info w-100 login-btn">PROCEED</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-12 col-lg-6 col-xl-6">
+                    <div class="card card-body border-0">
+                        <div class="row justify-content-center">
+                                <img src="{% static 'assets/images/covid-19.2.jpg' %}" class="rounded-circle" width="50%" height="150"/>
+                        </div>
+                        <div class="row justify-content-center">
+                            <h1 class="font-weight-bold text-info">CVMS <i class="fas fa-check-circle"></i> </h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="response"></div>
+            <br/>
+
+        </div>
+    </div>
+</div>
+</main>
+<script>
+    $(window).on('load', function() {
+		// Animate loader off screen
+		$(".se-pre-con").fadeOut("slow");;
+	});
+    $(document).ready(()=> {
+    })
+</script>
+{% include 'covidvms/footer.html' %}
+</body>
+</html>

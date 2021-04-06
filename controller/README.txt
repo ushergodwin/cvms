@@ -1,0 +1,1 @@
+For the database to work, you must have installed mysqlclient or pymysql

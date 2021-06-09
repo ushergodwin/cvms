@@ -127,7 +127,7 @@ def login():
     u_pass_lower = u_pass.lower()
     end(u_pass_lower)
     DB.where({"email": u_em})
-    data = DB.getAll("name, password", 'users')
+    data = DB.getAll("names, password", 'users')
     __hash = __n = ""
     if len(data) != 0:
         for n, p in data:
@@ -161,7 +161,7 @@ def welcome():
 def info():
     u_email = input("Enter your email: ")
     DB.where({"email": u_email})
-    user_data = DB.getAll("name, country, city, contact, date_of_birth, img_url", 'users')
+    user_data = DB.getAll("names, country, city, contact, date_of_birth, img_url", 'users')
     if len(user_data) != 0:
 
         for names, country, city, contact, dob, img_url in user_data:

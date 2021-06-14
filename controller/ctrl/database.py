@@ -6,6 +6,7 @@ __version__ = "1.0.1"
 __maintainer__ = "Tumuhimbise Godwin"
 __email__ = "godwintumuhimbise96@gmail.com"
 __status__ = "Production"
+
 import re as Regx
 
 from controller.ctrl.controller import String
@@ -244,7 +245,7 @@ class DB:
         cls._reset()
         row_count = cls._db.rowcount
         cls.__close()
-        if  row_count > 0:
+        if row_count > 0:
             return True
         else:
             return False
@@ -455,3 +456,27 @@ class DB:
          :returns int|str The last id from the data being inserted
          """
         return cls._lastId[0]
+
+    @classmethod
+    def join(cls, columns: str, tables: dict, type_of_join='INNER JOIN'):
+
+        """
+        Join 2 tables and return their data
+        :param columns str A string of columns seperated with commas
+        :param tables dict A dictionary of table name and column name to be used in joining
+        :param type_of_join str The type of join to use. default is INNER JOIN
+        You can only join 2 table. if you want to join more that 2 tables, use the query() method
+        :return: a list of tuples containing the fetched rows
+        """
+        sql = "SELECT " + columns + " FROM "
+        table_names = list(tables.keys())
+        join_columns = list(tables.values())
+        sql += table_names[0] + " " + type_of_join + " " + table_names[1] + " ON " + table_names[0]
+        sql += "." + join_columns[0] + " = " + table_names[1] + "." + join_columns[1]
+        if cls._where != "":
+            sql += cls._where
+        cls.__connect()
+        cls._db.execute(sql) if len(cls._wheredata) == 0 else cls._db.execute(sql, cls._wheredata)
+        cls._reset()
+        data = cls._db.fetchall()
+        return data

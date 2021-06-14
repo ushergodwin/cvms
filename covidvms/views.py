@@ -25,12 +25,14 @@ class Home:
         return render(request, 'covidvms/index.html', context)
 
     @classmethod
-    def logout(cls, request, session_id):
+    def logout(cls, request, logout):
         try:
-            del request.session[session_id]
+            if logout is not None:
+                session_id = request.session.get('current')
+                request.session.pop(session_id)
         except KeyError:
             pass
-        return render(request, 'covidvms/index.html', {})
+        return redirect('/')
 
     @classmethod
     def navbar(cls, request, doc):
@@ -50,6 +52,7 @@ class Home:
 
     @classmethod
     def login(cls, request):
+        redirect_url = "citizen/dashboard"
         if request.method == "POST" and request.POST.get('login'):
             email = request.POST.get('email')
             password = request.POST.get('password')
@@ -57,6 +60,11 @@ class Home:
             if Auth.email_error != "":
                 return HttpResponse(json.dumps({"status": Auth.email_error}))
             if Auth.is_authenticated:
-                return HttpResponse(json.dumps({"status": "Authenticated"}))
+                if Auth.account_type == 1:
+                    redirect_url = "health/dashboard"
+                if Auth.account_type == 2:
+                    redirect_url = "admin/dashboard"
+                request.session['current'] = email
+                return HttpResponse(json.dumps({"status": "Authenticated", "redirect": redirect_url}))
             else:
                 return HttpResponse(json.dumps({"status": "Invalid email or password"}))

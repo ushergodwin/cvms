@@ -1,4 +1,12 @@
 {% load static %}
+<script>
+    $(window).on('load', function() {
+		// Animate loader off screen
+		$(".se-pre-con").fadeOut("slow");;
+	});
+    $(document).ready(()=> {
+    })
+</script>
 <script src="{% static "assets/cvmsjs/cvms.js" %}"></script>
 <script src="{% static "assets/bootstrap/js/popper.min.js" %}"></script>
 <script src="{% static "assets/bootstrap/js/bootstrap.min.js" %}"></script>

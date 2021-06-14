@@ -1,6 +1,7 @@
+{% load static %}
 <nav class="navbar navbar-expand-md navbar-light bg-light">
     <a href="#" class="navbar-brand">
-        CVFMS
+        CVMS
     </a>
     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
@@ -14,12 +15,13 @@
             <a href="#" class="nav-item nav-link disabled" tabindex="-1">Reports</a>
         </div>
         <div class="navbar-nav ml-auto">
-            <a href="{% url 'covidvms:navbar' doc="1" %}" class="nav-item nav-link">Login</a>
+            <a href="javascript:void(0)" class="nav-item nav-link text-warning">Hi, {{user_name}}</a>
+            <a href='{% url "covidvms:logout" logout="logout" %}' class="nav-item nav-link" onclick="return confirm('Logout?')">Logout</a>
         </div>
     </div>
 </nav>
-<div class="container mt-3">
-    {% for id, gender, age in details %}
-        <p>ID: {{ id }}, Gender: {{ gender }}, Age: {{ age }}</p>
-    {% endfor %}
-</div>
+<nav class="side-nav bg-light" id="side-nav">
+    <div class="sidebar-content">
+        <h4> <i class="fas fa-tachometer-alt text-primary"></i> Dashboard</h4>
+    </div>
+</nav>

@@ -16,6 +16,7 @@ $(document).ready(function (){
                 if(response.status === "Authenticated") {
                     responseDiv.addClass('alert alert-success fade show w-50')
                     responseDiv.html("<i class='fas fa-check-circle text-success'></i> "+response.status)
+                    window.location.href = response.redirect
                 }else{
                     responseDiv.addClass('alert alert-warning fade show');
                     responseDiv.html("<i class='fas fa-exclamation-triangle text-warning'></i> "+response.status)

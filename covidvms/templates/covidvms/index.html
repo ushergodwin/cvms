@@ -1,33 +1,11 @@
-<!DOCTYPE html>
 {% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/fontawesome/css/all.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/cvmscss/cvms.css' %}">
-    <style type="text/css">
-        body{
+{% include 'covidvms/header.html' %}
+<style type="text/css">
+            body{
             background-image: url("{% static 'assets/images/file-20200324-155695-1kaxgif.jpg' %}");
             background-repeat: repeat-x;
         }
-        .no-js #loader { display: none;  }
-.js #loader { display: block; position: absolute; left: 100px; top: 0; }
-.se-pre-con {
-	position: fixed;
-	left: 0px;
-	top: 0px;
-	width: 100%;
-	height: 100%;
-	z-index: 9999;
-	background: url("{% static 'assets/images/Preloader_2.gif' %}") center no-repeat #fff;
-}
-    </style>
-    <script src="{% static 'assets/bootstrap/js/jquery-3.5.1.min.js' %}"></script>
-</head>
-<body>
-<div class="se-pre-con"></div>
+</style>
 <main class="container">
     <br/>
 <div class="row justify-content-center mt-5">
@@ -38,7 +16,7 @@
                 <div class="col-md-12 col-lg-6 col-xl-6">
                     <h4 class="font-weight-bold">LOGIN</h4>
                     <br/>
-                    <form action="{% url 'covidvms:login' %}" method="post" id="loginForm">
+                    <form action="{% url 'covidvms:login' %}" method="post" id="loginFor">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="email" class="sr-only">Email</label>
@@ -78,14 +56,38 @@
     </div>
 </div>
 </main>
-<script>
-    $(window).on('load', function() {
-		// Animate loader off screen
-		$(".se-pre-con").fadeOut("slow");;
-	});
-    $(document).ready(()=> {
-    })
-</script>
 {% include 'covidvms/footer.html' %}
+<script>
+    $(document).ready(function () {
+        $("#loginFor").on('submit', function (e) {
+            e.preventDefault()
+            const url = $(this).attr('action')
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: $(this).serializeArray(),
+                beforeSend: () => {
+                    $(".response").html("<span class='spinner-border spinner-border-sm text-info'></span> Authenticating")
+                    $(".login-btn").attr("disabled", true)
+                },
+                success: (data) => {
+                    let response = JSON.parse(data)
+                    let responseDiv = $(".response");
+                    if (response.status === "Authenticated") {
+                        responseDiv.addClass('alert alert-success fade show w-50')
+                        responseDiv.html("<i class='fas fa-check-circle text-success'></i> " + response.status)
+                        window.location.href = response.redirect
+                    } else {
+                        responseDiv.addClass('alert alert-warning fade show');
+                        responseDiv.html("<i class='fas fa-exclamation-triangle text-warning'></i> " + response.status)
+                    }
+                },
+                complete: () => {
+                    $(".login-btn").attr("disabled", false);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

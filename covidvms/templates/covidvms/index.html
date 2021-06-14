@@ -16,7 +16,7 @@
                 <div class="col-md-12 col-lg-6 col-xl-6">
                     <h4 class="font-weight-bold">LOGIN</h4>
                     <br/>
-                    <form action="{% url 'covidvms:login' %}" method="post" id="loginFor">
+                    <form action="{% url 'covidvms:login' %}" method="post" id="loginForm">
                         {% csrf_token %}
                         <div class="form-group">
                             <label for="email" class="sr-only">Email</label>
@@ -57,37 +57,5 @@
 </div>
 </main>
 {% include 'covidvms/footer.html' %}
-<script>
-    $(document).ready(function () {
-        $("#loginFor").on('submit', function (e) {
-            e.preventDefault()
-            const url = $(this).attr('action')
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: $(this).serializeArray(),
-                beforeSend: () => {
-                    $(".response").html("<span class='spinner-border spinner-border-sm text-info'></span> Authenticating")
-                    $(".login-btn").attr("disabled", true)
-                },
-                success: (data) => {
-                    let response = JSON.parse(data)
-                    let responseDiv = $(".response");
-                    if (response.status === "Authenticated") {
-                        responseDiv.addClass('alert alert-success fade show w-50')
-                        responseDiv.html("<i class='fas fa-check-circle text-success'></i> " + response.status)
-                        window.location.href = response.redirect
-                    } else {
-                        responseDiv.addClass('alert alert-warning fade show');
-                        responseDiv.html("<i class='fas fa-exclamation-triangle text-warning'></i> " + response.status)
-                    }
-                },
-                complete: () => {
-                    $(".login-btn").attr("disabled", false);
-                }
-            });
-        });
-    });
-</script>
 </body>
 </html>

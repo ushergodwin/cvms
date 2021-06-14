@@ -28,8 +28,7 @@ class Home:
     def logout(cls, request, logout):
         try:
             if logout is not None:
-                session_id = request.session.get('current')
-                request.session.pop(session_id)
+                del request.session['current']
         except KeyError:
             pass
         return redirect('/')

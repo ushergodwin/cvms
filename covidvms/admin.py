@@ -23,13 +23,13 @@ class Health:
             UserModel.set_current_user(current_user)
             userdata = UserModel.userdata()
             username = userdata['name']
+
+            context = {
+                "title": 'CVMS | Health Dashboard',
+                "user": Auth.getUser(),
+                "user_name": username,
+                "user_email": current_user
+            }
+            return render(request, 'covidvms/health/dashboard.html', context)
         else:
             return redirect('/')
-
-        context = {
-            "title": 'CVMS | Health Dashboard',
-            "user": Auth.getUser(),
-            "user_name": username,
-            "user_email": current_user
-        }
-        return render(request, 'covidvms/health/dashboard.html', context)

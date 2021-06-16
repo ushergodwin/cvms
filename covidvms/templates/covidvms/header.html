@@ -29,8 +29,16 @@
 .side-nav .sidebar-content {
     margin-top: 10px;
 }
+.main-body {
+    margin-left: 200px;
+}
     </style>
     <script src="{% static 'assets/bootstrap/js/jquery-3.5.1.min.js' %}"></script>
+    <script>
+        $(document).ready(()=> {
+            $('[data-toggle="tooltip"]').tooltip();
+        })
+    </script>
 </head>
 <body>
 <div class="se-pre-con"></div>

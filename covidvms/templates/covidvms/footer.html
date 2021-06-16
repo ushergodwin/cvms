@@ -2,7 +2,14 @@
 <script>
     $(window).on('load', function() {
 		// Animate loader off screen
-		$(".se-pre-con").fadeOut("slow");;
+		$(".se-pre-con").fadeOut("slow");
+		if (document.getElementById('time')) {
+		    let timeEl = document.getElementById('time')
+           setInterval(()=> {
+               let t = new Date()
+               timeEl.innerHTML = t.toLocaleTimeString();
+           }, 1000)
+        }
 	});
     $(document).ready(()=> {
     })

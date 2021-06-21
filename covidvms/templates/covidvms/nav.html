@@ -1,7 +1,13 @@
 {% load static %}
+<div class="">
+    <div class="container-fluid bg-warning ">
+            <img src="{% static 'assets/images/logo-MOH.png' %}" class="container-fluid" height="100px">
+            <p class="text-center"><b> Email: info@health.go.ug | Website: www.health.go.ug/.</b></p>
+    </div>
+</div>
 <nav class="navbar navbar-expand-md navbar-light bg-light">
     <a href="#" class="navbar-brand">
-        CVMS
+        <h1><b>CVMS</b></h1>
     </a>
     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
         <span class="navbar-toggler-icon"></span>
@@ -9,17 +15,17 @@
 
     <div class="collapse navbar-collapse" id="navbarCollapse">
         <div class="container ">
-            <span><a href="#" class="nav-item nav-link active badge badge-success">Home</a></span>
-            <span><a href="#" class="nav-item nav-link badge badge-primary ">Profile</a></span>
-            <span><a href="#" class="nav-item nav-link badge badge-primary ">Messages</a></span>
-            <span><a href="#" class="nav-item nav-link disabled badge badge-primary " tabindex="-1">Reports</a></span>
+            <span><a href="#" class="nav-item nav-link active badge badge-success"style="font-size: 2ex ">Home</a></span>
+            <span><a href="#" class="nav-item nav-link badge badge-primary "style="font-size: 2ex ">Profile</a></span>
+            <span><a href="#" class="nav-item nav-link badge badge-primary "style="font-size: 2ex ">Messages</a></span>
+            <span><a href="#" class="nav-item nav-link disabled badge badge-primary " tabindex="-1"style="font-size: 2ex ">Reports</a></span>
         </div>
         <div class="navbar navbar-expand-sm bg-light justify-content-end">
-             <a href="javascript:void(0)" class="container text-white badge badge-success" id="time"></a>
+             <a href="javascript:void(0)" class="container text-white badge badge-success" id="time"style="font-size: small "></a>
+            &nbsp;
+                <a href="javascript:void(0)" class="container text-white badge badge-success "style="font-size: 2ex ">Hi, {{user_name}}</a>
             &nbsp;&nbsp;
-                <a href="javascript:void(0)" class="container text-white badge badge-success ">Hi, {{user_name}}</a>
-            &nbsp;&nbsp;
-                <a href='{% url "covidvms:logout" logout="logout" %}' class="nav-link" onclick="return confirm('Logout?')" data-toggle="tooltip" title="Logout?"><i class="fas fa-sign-out-alt text-danger"></i> </a>
+                <a href='{% url "covidvms:logout" logout="logout" %}' class="nav-link" onclick="return confirm('Logout?')" data-toggle="tooltip" title="Logout?"style="font-size: 2ex "><i class="fas fa-sign-out-alt text-danger"></i> </a>
         </div>
     </div>
 </nav>

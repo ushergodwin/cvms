@@ -26,7 +26,6 @@ class Health:
 
             context = {
                 "title": 'CVMS | Health Dashboard',
-                "user": Auth.getUser(),
                 "user_name": username,
                 "user_email": current_user
             }

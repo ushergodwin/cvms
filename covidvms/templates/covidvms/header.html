@@ -4,9 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ title }}</title>
+    <link rel="icon" type="icon/x-image" href="{% static 'assets/images/icons/favicon.ico' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/fontawesome/css/all.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/cvmscss/cvms.css' %}">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <style type="text/css">
         .no-js #loader { display: none;  }
 .js #loader { display: block; position: absolute; left: 100px; top: 0; }
@@ -22,15 +24,49 @@
 .side-nav {
     position: fixed;
     height: 100%;
-    top: 50px;
+    top: 190px;
     left: 0;
-    width: 200px;
+    width: 180px;
 }
-.side-nav .sidebar-content {
-    margin-top: 10px;
+.toggle-side-nav {
+    position: fixed;
+    height: 100%;
+    margin-left: 180px;
 }
 .main-body {
-    margin-left: 200px;
+    margin-left: 220px;
+}
+@media  screen and (max-width: 660px) {
+    .side-nav {
+        display: none;
+    }
+    .toggle-side-nav {
+        margin-left: 0;
+        width: 20px;
+    }
+    #close-side-nav {
+        display: none;
+    }
+    #open-side-nav{
+        display: block;
+    }
+    .main-body {
+        margin-left: 40px;
+    }
+}
+@media screen and (min-width: 660px) {
+    #open-side-nav {
+    display: none;
+    }
+    #close-side-nav {
+        display: block;
+    }
+}
+.navbar-nav a {
+    font-size: 20px!important;
+}
+body {
+    font-family: 'Roboto';font-size: 18px;
 }
     </style>
     <script src="{% static 'assets/bootstrap/js/jquery-3.5.1.min.js' %}"></script>

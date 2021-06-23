@@ -36,6 +36,3 @@ class Auth(models.Model):
             cls.is_authenticated = True
         return cls.is_authenticated
 
-    @classmethod
-    def getUser(cls):
-        return DB.getAll("username, email", "auth_user")

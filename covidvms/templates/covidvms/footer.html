@@ -12,7 +12,57 @@
         }
 	});
     $(document).ready(()=> {
-    })
+
+    });
+    function closeSideNav() {
+    let open = document.getElementById('open-side-nav');
+    let close = document.getElementById('close-side-nav');
+    let main = document.getElementById('main-body');
+    let sideNav = document.getElementById('sideNav');
+    let toggleSideNav = document.getElementById('toggle-side-nav');
+    open.style.display = "block"; 
+    close.style.display = "none";
+    main.animate([
+        {marginLeft: '220px'},
+        {marginLeft: '40px'}
+    ],{easing: 'ease-out', duration: 500});
+    main.style.marginLeft = '40px';
+    sideNav.animate([
+        {width: '180px'},
+        {width: '0'}
+    ],{easing: 'ease-out', duration: 500});
+    toggleSideNav.animate([
+        {width: '180px'},
+        {width: '0'}
+    ],{easing: 'ease-out', duration: 500});
+    toggleSideNav.style.width = '20px';
+    toggleSideNav.style.marginLeft = '0';
+    sideNav.style.display = 'none';
+}
+function openSideNav() {
+    let open = document.getElementById('open-side-nav');
+    let close = document.getElementById('close-side-nav');
+    let main = document.getElementById('main-body');
+    let sideNav = document.getElementById('sideNav');
+    let toggleSideNav = document.getElementById('toggle-side-nav');
+    open.style.display = "none";
+    main.animate([
+        {marginLeft: '40px'},
+        {marginLeft: '220px'}
+    ],{easing: 'ease-in', duration: 500});
+    main.style.marginLeft = '220px';
+    sideNav.animate([
+        {width: '0'},
+        {width: '180px'}
+    ],{easing: 'ease-in', duration: 500});
+    toggleSideNav.animate([
+        {marginLeft: '20px'},
+        {marginLeft: '180px'}
+    ],{easing: 'ease-out', duration: 500});
+    toggleSideNav.style.marginLeft = '180px';
+    sideNav.style.display = 'block';
+    close.style.display = "block";                                      
+}
 </script>
 <script src="{% static "assets/cvmsjs/cvms.js" %}"></script>
 <script src="{% static "assets/bootstrap/js/popper.min.js" %}"></script>

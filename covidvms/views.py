@@ -19,8 +19,7 @@ class Home:
     @classmethod
     def index(cls, request):
         context = {
-            "title": 'Covid Vaccination Management System',
-            "user": Auth.getUser(),
+            "title": 'Covid Vaccination Management System'
         }
         return render(request, 'covidvms/index.html', context)
 

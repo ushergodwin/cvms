@@ -2,7 +2,6 @@ from django.db import models
 
 from controller.ctrl.database import DB
 
-
 class UserModel(models.Model):
     __user = ""
 

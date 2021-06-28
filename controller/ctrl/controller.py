@@ -459,3 +459,57 @@ class NIN:
             return True
         else:
             return False
+
+class Notify:
+    """Access All Notification alerts
+    """
+    def __init__(self) -> None:
+        pass
+
+    @classmethod
+    def success(cls, message:str):
+        """Success Notification
+
+        Args:
+            message (str): The message to send as a notification
+
+        Returns:
+            str: success notification
+        """
+        return "<div class='alert alert-success'><strong><i class='fas fa-check-circle text-success'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
+    
+    @classmethod
+    def failure(cls, message:str):
+        """Failure | Warning Notification
+
+        Args:
+            message (str): The message to send as a notification
+
+        Returns:
+            str: Failure notification
+        """
+        return "<div class='alert alert-warning'><strong><i class='fas fa-exclamation-triangle text-warning'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
+
+    @classmethod
+    def info(cls, message:str):
+        """Info Notification
+
+        Args:
+            message (str): The message to send as a notification
+
+        Returns:
+            str: Info notification 
+        """
+        return "<div class='alert alert-info'><strong><i class='fas fa-info-circle text-info'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
+
+    @classmethod
+    def danger(cls, message:str):
+        """ Error Notification
+
+        Args:
+            message (str): The message to send as an error notification
+
+        Returns:
+            str: Error notification
+        """
+        return "<div class='alert alert-danger'><strong><i class='fas fa-exclamation-triangle text-danger'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)

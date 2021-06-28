@@ -1,0 +1,172 @@
+{% load static %}
+{% include '../header.html' %}
+{% include '../nav.html' %}
+<main class="container-fluid">
+    <div class="main-body" id="main-body">
+        <div class="row mt-5">
+            <div class="col-md-12 col-lg-4 col-xl-4">
+                <h4 class="font-weight-bold">REPUBLIC OF UGANDA</h4>
+                <img src="{% static 'assets/images/republic-of-uganda.jpg' %}" class="rounded"/>
+            </div>
+            <div class="col-md-12 col-lg-8 col-xl-8">
+                <h4>Register A Citizen</h4>
+                
+                <div class="card card-body shadow">
+                    <form action="{% url 'covidvms:register_citizen'%}" method="POST" id="addCitizenForm">
+                        <div class="first-row">
+                            <div class="row" id="">
+                                <div class="col-md-12 col-lg-6 col-xl-6">
+                                    <div class="form-group">
+                                        <label for="surname"> Surname
+                                            <input type="text" name="surname" id="surname" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-6 col-xl-6">
+                                    <div class="form-group">
+                                        <label for="givenname">Given Name 
+                                            <input type="text" name="givenname" id="givenname" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="nationality">Nationality 
+                                            <input type="text" name="nationality" list="nationale" id="nationality" class="borderless" autocomplete="off" required/>
+                                            <datalist id="nationale">
+                                                <option value="UGA">Ugandan</option>
+                                                <option value="Kenyan">Kenyan</option>
+                                            </datalist>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="gender">Gender 
+                                            <select name="gender" class="borderless" required>
+                                                <option value="">-- select gender --</option>
+                                                <option value="M">Male</option>
+                                                <option value="F">Female</option>
+                                                <option value="Trans">Transgender</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="dob">Date of Birth
+                                            <input type="date" name="dob" id="dob" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="nin">NIN
+                                            <input type="text" name="nin" id="nin" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="card_no">Card No 
+                                            <input type="number" name="card_no" id="card-no" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="expiry_date">Date of Expiry 
+                                            <input type="date" name="expiry_date" id="expiry-date" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-end">
+                                <button type="button" id="next" class="btn btn-primary">Next <i class="fas fa-angle-double-right"></i></button>
+                            </div>
+                        </div>
+                        <div class="second-row">
+                            <div class="row">
+                                <div class="col-md-12 col-lg-6 col-xl-6">
+                                    <div class="form-group">
+                                        <label for="village">Village 
+                                            <input type="text" name="village" id="village" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-6 col-xl-6">
+                                    <div class="form-group">
+                                        <label for="parish">Parish 
+                                            <input type="text" name="parish" id="parish" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="sub_county">Sub County 
+                                            <input type="text" name="sub_county" id="sub_county" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="county">County 
+                                            <input type="text" name="county" id="county" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-xl-4">
+                                    <div class="form-group">
+                                        <label for="district">District 
+                                            <input type="text" name="district" id="district" class="borderless" autocomplete="off" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row justify-content-between">
+                                <button type="button" class="btn btn-primary" id="previous"><i class="fas fa-angle-double-left"></i> Previous</button>
+                                <input type="hidden" name="add_citizen" value="1"/>
+                                {% csrf_token %}
+                                <div class="response"></div>
+                                <button type="submit" class="btn btn-success" id="add-citizen-btn">Add Citizen <i class="fas fa-arrow-circle-up"></i> </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% include '../footer.html' %}
+<script>
+    $(document).ready(()=> {
+        $("#next").on('click', ()=> {$(".first-row").toggle(500);$(".second-row").toggle(500);});$("#previous").on('click', ()=> {$(".first-row").toggle(500);$(".second-row").toggle(500);});
+        $("#addCitizenForm").on('submit', function(event){
+            event.preventDefault();
+            let currentObject = $(this);
+            $.ajax({
+                url: currentObject.attr('action'),
+                type: 'POST',
+                data: currentObject.serializeArray(),
+                beforeSend: () => {
+                    $("#add-citizen-btn").html("<span class='spinner-border spinner-border-sm'></span> Processing...");
+                },
+                success: (response) => {
+                    $(".response").html(response);
+                },
+                complete: () => {
+                    $("#add-citizen-btn").html("Add Citizen <i class='fas fa-arrow-circle-up'> </i>");
+                    currentObject.trigger('reset');
+                }
+            })
+        })
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% load static %}
+{% include '../header.html' %}
+{% include '../nav.html' %}
+<main class="container-fluid">
+    <div class="main-body" id="main-body">
+        <div class="row mt-5">
+            <div class="col-md-12 col-lg-12 col-xl-12">
+                <h4 class="font-weight-bold text-center">REPUBLIC OF UGANDA</h4>
+                <div class="table-responsive">
+                    <table class="table table-light table-striped" id="citizens">
+                        <thead>
+                            <th>NIN</th>
+                            <th>SURNAME</th>
+                            <th>GIVEN NAME</th>
+                            <th>NATIONALITY</th>
+                            <th>SEX</th>
+                            <th>DATE OF BIRTH</th>
+                    
+                            <th>CARD NO</th>
+                            <th>DATE OF EXPIRY</th>
+                            <th>VILLAGE</th>
+                            <th>PARISH</th>
+                            <th>S. COUNTY</th>
+                            <th>COUNTY</th>
+                            <th>DISTRICT</th>
+                        </thead>
+
+                        <tbody>
+                            {% for citizen in citizens %}
+                                <tr>
+                                    <td>{{ citizen.0 }}</td>
+                                    <td>{{ citizen.1 }}</td>
+                                    <td>{{ citizen.2 }}</td>
+                                    <td>{{ citizen.3 }}</td>
+                                    <td>{{ citizen.4 }}</td>
+                                    <td>{{ citizen.5 }}</td>
+                                    <td>{{ citizen.6 }}</td>
+                                    <td>{{ citizen.7 }}</td>
+                                    <td>{{ citizen.8 }}</td>
+                                    <td>{{ citizen.9 }}</td>
+                                    <td>{{ citizen.10 }}</td>
+                                    <td>{{ citizen.11 }}</td>
+                                    <td>{{ citizen.12 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include '../footer.html' %}
+<script>
+    $(document).ready(()=> {
+        $("#citizens").DataTable();
+    })
+</script>
+</body>
+</html>

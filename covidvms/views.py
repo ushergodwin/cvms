@@ -1,12 +1,11 @@
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
-from controller.ctrl import controller
+from controller.ctrl.controller import File, Math, Password, String
 from covidvms.models import Auth
 from django.http import JsonResponse
 import json
-File = controller.File
-Math = controller.Math
-Password = controller.Password
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 
 
 # Create your views here.
@@ -54,13 +53,25 @@ class Home:
         if request.method == "POST" and request.POST.get('login'):
             email = request.POST.get('email')
             password = request.POST.get('password')
-            Auth.authenticate(email, password)
+
+            column = "email"
+
+            user_key = ""
+
+            try:
+                validate_email(email)
+                user_key = email
+            except ValidationError as e:
+                column = "username"
+                user_key = String.to_lower(String.trim(email))
+
+            Auth.authenticate(user_key, password, column)
             if Auth.email_error != "":
                 return HttpResponse(json.dumps({"status": Auth.email_error}))
             if Auth.is_authenticated:
-                if Auth.account_type == 1:
+                if Auth.is_superuser == 0 and Auth.is_staff == 1:
                     redirect_url = "health/dashboard"
-                if Auth.account_type == 2:
+                if Auth.is_superuser == 1 and Auth.is_staff == 1:
                     redirect_url = "admin/dashboard"
                 request.session['current'] = email
                 return HttpResponse(json.dumps({"status": "Authenticated", "redirect": redirect_url}))

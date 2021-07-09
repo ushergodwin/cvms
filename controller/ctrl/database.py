@@ -44,6 +44,7 @@ if DB_DRIVER == "mysqlconnector":
 class DB:
     _db_instance = DRIVER.connect(
         host=Config.get("HOST"),
+        port=Config.get("PORT"),
         user=Config.get("USER"),
         password=Config.get("PASSWORD"),
         database=Config.get("DATABASE")
@@ -110,10 +111,12 @@ class DB:
     def getAll(cls, columns: str, table: str, limit=None):
         """
         The where method should be called first if a condition is needed while fetching data
-        :param columns A string containing column names separated by commas
-        :param table A string of table name
-        :param limit An integer containing the number of rows to be returned
-        :return tuple Data fetched from the run query
+        Args:
+            columns (str): A string containing column names separated by commas
+            table (str): A string of table name
+            limit (int): An integer containing the number of rows to be returned
+        Returns:
+            tuple: Data fetched from the run query
         """
 
         sql = "SELECT " + columns + " FROM " + table
@@ -133,8 +136,9 @@ class DB:
     @classmethod
     def where(cls, condition: dict, sec=False):
         """
-        :param condition A dictionary containing column name and value to supply in the condition
-        :param sec bool If set to True, the third (3rd) pair of key and value is used as a second AND
+        Args:
+            condition (dict): A dictionary containing column name and value to supply in the condition
+            sec (bool): If set to True, the third (3rd) pair of key and value is used as a second AND
         condition hence forming WHERE AND AND, else OR is used hence forming WHERE AND OR
         """
 
@@ -157,9 +161,11 @@ class DB:
     @classmethod
     def orderBy(cls, column_name: str, order="ASC"):
         """
-        :param column_name The name of the column to use in the order by statement
-        :param order The type of ordering to use. Default is Ascending
-        :return DB instance
+        Args:
+            column_name (str): The name of the column to use in the order by statement
+            order (str): The type of ordering to use. Default is Ascending
+        Returns:
+            DB instance
         """
 
         cls._orderBy += " ORDER BY " + column_name + " " + order
@@ -168,10 +174,12 @@ class DB:
     @classmethod
     def getOneRow(cls, column: str, table: str, limit=1):
         """
-        :param column A string containing column names separated by commas
-        :param table A string containing the table name to fetch data from
-        :param limit Number of rows to return 1 (constant)
-        :returns tuple containing one row of data
+        Args:
+            column (str): A string containing column names separated by commas
+            table (str):  A string containing the table name to fetch data from
+            limit (int):  Number of rows to return 1 (constant)
+        Returns:
+            tuple:  containing one row of data
         """
 
         sql = "SELECT " + column + " FROM " + table
@@ -189,21 +197,27 @@ class DB:
     @classmethod
     def not_empty(cls, collection):
         """
-        :var collection A tuple with data from the database
-        :returns bool True if the tuple is not empty
+        Args:
+            collection (tuple): A tuple with data from the database
+        Returns:
+            bool: True if the tuple is not empty
         """
 
-        if type(collection) is not bool:
+        if collection is None:
+            return False
+        else:
             return True
 
     @classmethod
-    def getOneValue(cls, column: str, table: str) -> str:
+    def getOneValue(cls, column: str, table: str):
         """
-        :param column A column name to fetch
-        :param table A table name
-        :returns str String of data
+        Args:
+            column (str): A column name to fetch
+            table (str): A table name
+        Returns:
+            str: String of data
         """
-
+        res = ""
         sql = "SELECT " + column + " FROM " + table
         if cls._where != "":
             sql += cls._where
@@ -212,17 +226,21 @@ class DB:
         cls._reset()
         value = cls._db.fetchone()
         cls.__close()
-        return value[0]
+        if cls.not_empty(value):
+            res = value[0]
+        
+        return res
 
     @classmethod
-    def insertData(cls, data_values: dict, table: str) -> bool:
+    def insertData(cls, data_values: dict, table: str):
         """
-        :param data_values A dictionary with pairs of key and value representing the column name and its value
-        :param table The name of the table where to insert the data
-        :exception Raises an Exception if table_data supplied is not of type list
-        eg [("1", "2", "3"), ("4", "5", "6")]
-        :returns bool Returns true on success and False on failure.
-        You can access the number of affected rows by calling the affectedRows method
+        Args:
+            data_values (dict): A dictionary with pairs of key and value representing the column name and its value
+            table (str):        The name of the table where to insert the data
+        Returns:
+            bool: Returns true on success and False on failure.
+
+            You can access the number of affected rows by calling the affectedRows method
         """
 
         keys = data_values.keys()
@@ -251,15 +269,16 @@ class DB:
             return False
 
     @classmethod
-    def insertMany(cls, columns: list, table_name: str, table_data: list) -> bool:
+    def insertMany(cls, columns: list, table_name: str, table_data: list):
         """
-        :param table_data:
-        :param columns A list containing table column names
-        :param table_name The name of the table where to insert the data
-        :exception Raises an Exception if table_data supplied is not of type list
-        eg [("1", "2", "3"), ("4", "5", "6")]
-        :returns bool Returns true on success and False on failure.
-        You can access the number of affected rows by calling the affectedRows method
+        Args:
+            columns (list): A list containing table column names
+            table_name (str): The name of the table where to insert the data
+            table_date (list): A list of tuples containing data to insert
+        Returns:
+            bool Returns true on success and False on failure.
+
+            You can access the number of affected rows by calling the affectedRows method
         """
 
         if type(columns) is not list or type(table_data) is not list:
@@ -290,14 +309,16 @@ class DB:
             return False
 
     @classmethod
-    def update(cls, table_data: dict, table_name: str) -> bool:
+    def update(cls, table_data: dict, table_name: str):
         """
         The where method should be called first to supply a condition
-        :param table_data A dictionary of key and value pairs representing column name and value
-        :param table_name The name of the table where to update
-        :exception Raises an Exception if the where method is not called first
-        :returns bool Returns true on success and False on failure.
-        You can access the number of affected rows by calling the affectedRows method
+        Args:
+            table_data (dict): A dictionary of key and value pairs representing column name and value
+            table_name (str): The name of the table where to update
+        Returns:
+            bool: Returns true on success and False on failure.
+
+            You can access the number of affected rows by calling the affectedRows method
         """
 
         sql = "UPDATE " + table_name + " SET "
@@ -327,11 +348,14 @@ class DB:
             return False
 
     @classmethod
-    def deleteAll(cls, table_name: str) -> bool:
+    def deleteAll(cls, table_name: str):
         """
-        :param table_name str The name of the table to delete data from
-        :returns bool Returns true on success and False on failure.
-        You can access the number of affected rows by calling the affectedRows method
+        Args:
+            table_name (str): The name of the table to delete data from
+        Returns:
+            bool: Returns true on success and False on failure.
+
+            You can access the number of affected rows by calling the affectedRows method
         """
 
         sql = "TRUNCATE TABLE " + table_name
@@ -346,12 +370,15 @@ class DB:
             return False
 
     @classmethod
-    def trash(cls, table_name: str) -> bool:
+    def trash(cls, table_name: str):
         """
         The where method should be called first to supply a condition
-        :param table_name str The name of the table to delete data from
-        :returns bool Returns true on success and False on failure.
-        You can access the number of affected rows by calling the affectedRows method
+        Args:
+            table_name (str): The name of the table to delete data from
+        Returns:
+            bool: Returns true on success and False on failure.
+
+            You can access the number of affected rows by calling the affectedRows method
         """
 
         if cls._where == "":
@@ -372,10 +399,14 @@ class DB:
     def query(cls, sql: str, query_data: list):
 
         """
-        :param sql The query to execute. Should be a select query
-        :param query_data A list of values for the prepared statement
-        :raises Exception when the parsed query is not a prepared statement
-        :returns tuple
+        Exceute a custom query.
+        Args:
+            sql (str): The correct sql query to execute. Should be a select query of prepared statments
+            query_data (list): A list of values for the prepared statement
+        Raises: 
+            Exception: when the parsed query is not a prepared statement
+        Returns:
+        tuple
         """
 
         data_type = type(query_data)
@@ -394,9 +425,12 @@ class DB:
     @classmethod
     def rowCount(cls, column_name: str, table_name: str):
         """
-        :param column_name The name of the column to count from
-        :param table_name The name of the table where to carry out a transaction
-        :returns int
+        Count the number of rows for a given column
+        Args:
+            column_name (str): The name of the column to count from
+            table_name (str):  The name of the table where to carry out a transaction
+        Returns:
+            int: The total count 
         """
 
         sql = "SELECT COUNT(" + column_name + ") FROM " + table_name
@@ -411,9 +445,13 @@ class DB:
     @classmethod
     def maxValue(cls, column_name: str, table_name: str):
         """
-         :param column_name The name of the column to pick the max value
-         :param table_name The name of the table where to carry out a transaction
-         :returns Maximum value from the selected data
+        Get the maximum value of the data in a specific column
+
+         Args:
+            column_name (str): The name of the column to pick the max value
+            table_name (str): The name of the table where to carry out a transaction
+         Returns:
+            Maximum value from the selected data
          """
 
         sql = "SELECT MAX(" + column_name + ") FROM " + table_name
@@ -428,9 +466,13 @@ class DB:
     @classmethod
     def minValue(cls, column_name: str, table_name: str):
         """
-        :param column_name The name of the column to pick the max value
-        :param table_name The name of the table where to carry out a transaction
-        :returns Minimum value from the selected data
+        Get the minimum value of the data in a specific column
+
+        Args:
+            column_name (str): The name of the column to pick the max value
+            table_name (str):  The name of the table where to carry out a transaction
+        Returns:
+            Minimum value from the selected data
         """
 
         sql = "SELECT MIN(" + column_name + ") FROM " + table_name
@@ -445,7 +487,10 @@ class DB:
     @classmethod
     def affectedRows(cls):
         """
-        :return int The number of affected rows after query execution
+        Get the number of aaffected rows after query execution
+
+        Returns:
+            int The number of affected rows
         """
 
         return cls._affectedRows
@@ -453,7 +498,9 @@ class DB:
     @classmethod
     def lastInsertId(cls):
         """
-         :returns int|str The last id from the data being inserted
+        Get the last Insert Id
+         Returns:
+            int|str The last id from the data being inserted
          """
         return cls._lastId[0]
 
@@ -462,11 +509,15 @@ class DB:
 
         """
         Join 2 tables and return their data
-        :param columns str A string of columns seperated with commas
-        :param tables dict A dictionary of table name and column name to be used in joining
-        :param type_of_join str The type of join to use. default is INNER JOIN
+
+        Args:
+            columns (str): A string of columns seperated with commas
+            tables (dict): A dictionary of table name and column name to be used in joining
+            type_of_join (str): The type of join to use. default is INNER JOIN
+        Returns:
+            list: of tuples containing the fetched rows
+        
         You can only join 2 table. if you want to join more that 2 tables, use the query() method
-        :return: a list of tuples containing the fetched rows
         """
         sql = "SELECT " + columns + " FROM "
         table_names = list(tables.keys())

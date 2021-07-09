@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'cvms',
         'USER': 'root',
         'PASSWORD': '',
-        'HOST': 'localhost',
+        'HOST': '127.0.0.1',
     }
 }
 

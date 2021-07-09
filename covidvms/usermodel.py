@@ -2,11 +2,25 @@ from django.db import models
 
 from controller.ctrl.database import DB
 
+from django.core.exceptions import ValidationError
+
+from django.core.validators import validate_email
 class UserModel(models.Model):
     __user = ""
 
+    email = models.CharField(max_length=65, primary_key=True)
+    names = models.CharField(max_length=65)
+    password = models.CharField(max_length=255)
+    image_url = models.CharField(max_length=255)
+    account_type = models.IntegerField(default=0)
+
     def __init__(self):
         pass
+    
+    def save_user(self):
+        self.save()
+    def __str__(self) -> str:
+        return super().__str__()
 
     @classmethod
     def set_current_user(cls, user):
@@ -27,16 +41,19 @@ class UserModel(models.Model):
         :return: dict A dictionary of data for the current user
         """
         data = dict()
-        DB.where({"email": cls.__user})
-        user_data = DB.getOneRow('names, country, city, contact, dob, img_url', 'users')
+        column_key = "email"
+
+        try:
+            validate_email(cls.__user)
+        except ValidationError as e:
+            column_key = "username"
+
+        DB.where({column_key: cls.__user})
+        user_data = DB.getOneRow('first_name, last_name', 'auth_user')
         if len(user_data) != 0:
-            for names, country, city, contact, dob, img_ur in user_data:
+            for first_name, last_name in user_data:
                 data = {
-                    "name": names,
-                    "country": country,
-                    "city": city,
-                    "contact": contact,
-                    "dob": dob,
-                    "image": img_ur
+                    "fname": first_name,
+                    "lname" : last_name
                 }
         return data

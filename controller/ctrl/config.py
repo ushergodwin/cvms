@@ -1,3 +1,6 @@
+from decouple import config as env
+
+
 """
 If you use pymysql or mysqlclient or MySQLdb drivers, then the
 ENGINE: 'django.db.backends.mysql'
@@ -13,16 +16,12 @@ ENGINE: mysql.connector.django
 """
 """ DB DRIVERS USE ONE"""
 """ MAKE SURE THAT THE DRIVER IS INSTALLED FIRST"""
-DB_DRIVER_01 = "mysqlclient"
-
-DB_DRIVER_02 = "pymysql"
-
-DB_DRIVER_03 = "mysqlconnector"
 
 Config = {
-    "HOST": 'localhost',
-    "USER": 'root',
-    "PASSWORD": '',
-    "DATABASE": 'cvms',
-    "DB_DRIVER": DB_DRIVER_02,
+    "HOST": env("HOST"),
+    "USER": env("USER"),
+    "PASSWORD": env("PASSWORD"),
+    "DATABASE": env("DATABASE"),
+    "DB_DRIVER": env("DB_DRIVER"),
+    "PORT": int(env("PORT"))
 }

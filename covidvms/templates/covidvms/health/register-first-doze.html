@@ -1,0 +1,112 @@
+{% load static %}
+{% include '../header.html' %}
+{% include '../nav.html' %}
+<main class="container-fluid">
+    <div class="main-body" id="main-body">
+        <div class="row mt-5 justify-content-center">
+                <div class="col-md-12 col-lg-12 col-xl-12">
+                    <h4 class="font-weight-bold text-center">REPUBLIC OF UGANDA</h4>
+
+                    <div class="row">
+                        <div class="col-md-12 col-lg-6 col-xl-6">
+                            <div class="card card-body shadow card-striped text-dark">
+                                <div class="row justify-content-between ml-3 font-weight-bold">
+                                    <img src="{% static 'assets/images/flag-map_of_uganda.png'%}" class="img-responsive rounderd" alt="Fag Map of Uganda" width="100" height="70"/>
+                                    <span>REPUBLIC OF UGANDA NATIONAL ID CARD</span>
+                                </div>
+                                <div class="d-flex mt-1">
+                                    <img src="{% static 'assets/images/photo-place-holder1.jpg'%}" class="img-responsive rounderd" alt="{{citizen.sur_name}}" width="100" height="100"/>
+                                    <div class="row ml-5">
+                                        <div class="clear-flex">
+                                            <small>SURNAME</small>
+                                            <p class="font-weight-bold">{{ citizen.sur_name}}</p>
+                                            <small>GIVEN NAME</small>
+                                            <p class="font-weight-bold">{{ citizen.given_name}}</p>
+                                            <div class="row justify-content-between">
+                                                <div>
+                                                    <small>NATIONALITY</small>
+                                                    <p class="font-weight-bold">{{ citizen.nationality}}</p>
+                                                </div>
+
+                                                <div>
+                                                    <small>SEX</small>
+                                                    <p class="font-weight-bold">{{ citizen.sex}}</p>
+                                                </div>
+
+                                                <div>
+                                                    <small>DATE OF BIRTH </small>
+                                                    <p class="font-weight-bold">{{ citizen.dob}}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="row">
+                                                <div class="col-lg-6 col-xl-8">
+                                                    <small>NIN</small>
+                                                    <p class="font-weight-bold">{{ citizen.nin}}</p>
+                                                </div>
+
+                                                <div class="col-lg-6 col-xl-4">
+                                                    <small>CARD NO</small>
+                                                    <span class="font-weight-bold">{{ citizen.card_no}}</span>
+                                                </div>
+                                            </div>
+                                            <small>DATE OF EXPIRY </small>
+                                            <p><span class="font-weight-bold">{{ citizen.expiry_date}}</span></p>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 col-lg-6 col-xl-6">
+                            <div class="card card-body shadow">
+                                <h4>GIVE <span class="text-success">{{citizen.sur_name}} {{citizen.given_name}}</span> {% if citizen.sex == 'M' %} his {% else %} her {% endif%} first doze </h4>
+                                <br/>
+                                <form action="" method="POST" id="firstDozeForm">
+                                    <div class="form-group">
+                                        <label for="vaccine_name">Vaccine Name</label>
+                                        <select class="custom-select" name="vaccine">
+                                            <option value="">--- select vaccine --- </option>
+                                            {% for vaccine in vaccines %}
+                                                <option value="{{vaccine.vaccine_id}}">{{vaccine.name}} ( {{vaccine.dozes}} shots)</option>
+                                            {% endfor %}
+                                        </select>
+                                        <label for="taken_date">Take On ({{current_date}})</label>
+                                        <input type="date" name="taken_date" class="form-control" value="{{date}}"/>
+                                        <label for="next_doze_date">Next Doze Date ({{next}})</label>
+                                        <input type="date" name="next_doze_date" class="form-control" value="{{next_dd}}"/>
+                                    </div>
+                                    <em class="text-info">
+                                        The Citizen should only be registed for the first doze after having given 
+                                        consent and received the vaccine.
+                                    </em>
+                                    <div class="form-group">
+                                        <div class="row justify-content-between">
+                                            <input type="hidden" name="citizen_nin_id" value="{{citizen.nin}}"/>
+                                            <input type="hidden" name="register_first_doze" value="1"/>
+                                            <button type="submit" class="btn btn-success" id="first-doze-btn">Give First Doze <i class="fas fa-check-circle"></i></button>
+                                            <a href="{% url 'covidvms:view-first-doze'%}" class="btn btn-warning">Cancel</a>
+                                        </div>
+                                    </div>
+                                    <div class="first-doze-response"></div>
+                                </form>
+                            </div>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% include '../footer.html' %}
+<script>
+    $(document).ready(()=> {
+        //$("#citizens").DataTable();
+    })
+</script>
+</body>
+</html>

@@ -23,12 +23,12 @@
         <a href="javascript:void(0)" id="citizen-open"><i class="fas fa-user-circle"></i> Citezen &nbsp;<i class="fas fa-angle-down" id="citizen-down"></i> </a>
         <ul id="citizen-list">
             <li><a href="{% url 'covidvms:add-citizen' %}"><i class="fas fa-plus-circle"></i> Add Citizen</a></li>
-            <li><a href=""><i class="fas fa-eye"></i> View Citizen</a></li>
+            <li><a href="{% url 'covidvms:view-citizens' %}"><i class="fas fa-eye"></i> View Citizen</a></li>
         </ul> <br/><hr class="hr" />
         <a href="javascript:void(0)" id="vaccination-open"><i class="fas fa-check-circle"></i> Vaccination &nbsp;<i class="fas fa-angle-down" id="vaccination-down"></i> </a>
         <ul id="vaccination-list">
             <li><a href=""><i class="fas fa-compact-disc"></i> Vaccinated Citizen</a></li>
-            <li><a href=""><i class="fas fa-plus-circle"></i> Register 1<sup>st</sup> doze</a></li>
+            <li><a href="{% url 'covidvms:view-first-doze' %}"><i class="fas fa-plus-circle"></i> Register 1<sup>st</sup> doze</a></li>
             <li><a href=""><i class="fas fa-plus-circle"></i> Register 2<sup>nd</sup> doze</a></li>
             <li><a href=""><i class="fas fa-plus-broom"></i> Clearencese</a></li>
         </ul><br/><hr class="hr" />

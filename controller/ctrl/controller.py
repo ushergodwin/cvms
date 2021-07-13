@@ -14,7 +14,7 @@ class System:
         pass
 
     @classmethod
-    def os(cls) :
+    def os(cls):
         """
         Get the current operating system
 
@@ -248,7 +248,6 @@ class File:
 
 
 class Password:
-    
 
     def __init__(self):
         pass
@@ -279,15 +278,14 @@ class Password:
 
 
 class String:
- 
 
     def __init__(self):
         pass
 
     @classmethod
     def sub_str(cls, string: str,
-                  pos1: int,
-                  pos2: int):
+                pos1: int,
+                pos2: int):
         """
         Get a sub copy of a string
 
@@ -325,7 +323,7 @@ class String:
         return "{}".format(string).lower()
 
     @classmethod
-    def trim(cls, string:str):
+    def trim(cls, string: str):
         """
         Return a copy of the string with leading and trailing whitespace removed
 
@@ -390,7 +388,7 @@ class String:
         return ''.join(shuffled_str)
 
     @classmethod
-    def replace(cls, oldvalue:str, newvalue:str, subject:str):
+    def replace(cls, oldvalue: str, newvalue: str, subject: str):
         """Replace an occurrence in a string
 
         Args:
@@ -404,7 +402,7 @@ class String:
         return "{}".format(subject).replace(oldvalue, newvalue)
 
     @classmethod
-    def is_not_empty(cls, values:list):
+    def is_not_empty(cls, values: list):
         """Check empty values.
 
         Args:
@@ -423,7 +421,6 @@ class String:
 
 class Date:
 
-
     def __init__(self):
         pass
 
@@ -441,7 +438,7 @@ class Date:
         return cls.__c_date().year
 
     @classmethod
-    def datetime(cls, clock:int = 24):
+    def datetime(cls, clock: int = 24):
         """Get the current date and time
 
         Args:
@@ -455,7 +452,7 @@ class Date:
         return datetime.today().strftime(format)
 
     @classmethod
-    def dbdate(cls, clock:int = 24, hours:bool=True):
+    def dbdate(cls, clock: int = 24, hours: bool = True):
         """Get the current date and time
 
         Args:
@@ -558,9 +555,9 @@ class Date:
             str: Date string
         """
         return datetime.now().date()
-        
+
     @classmethod
-    def strtotime(cls, period_in_number=1, period_in_words="days", only_date=False, ISO:bool=False):
+    def strtotime(cls, period_in_number=1, period_in_words="days", only_date=False, ISO: bool = False):
         """Convert a string to date.
 
         Args:
@@ -580,7 +577,7 @@ class Date:
         format = datetime.datetime.now()
         if only_date:
             format = datetime.datetime.now().date()
-        
+
         if period_in_words == "month" or period_in_words == "months":
             weeks = period_in_number * 4
             period_in_number = weeks * 7
@@ -625,14 +622,16 @@ class NIN:
         else:
             return False
 
+
 class Notify:
     """Access All Notification alerts
     """
+
     def __init__(self) -> None:
         pass
 
     @classmethod
-    def success(cls, message:str):
+    def success(cls, message: str):
         """Success Notification
 
         Args:
@@ -641,10 +640,11 @@ class Notify:
         Returns:
             str: success notification
         """
-        return "<div class='alert alert-success'><strong><i class='fas fa-check-circle text-success'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
-    
+        return "<div class='alert alert-success'><strong><i class='fas fa-check-circle text-success'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
+            message)
+
     @classmethod
-    def failure(cls, message:str):
+    def failure(cls, message: str):
         """Failure | Warning Notification
 
         Args:
@@ -653,10 +653,11 @@ class Notify:
         Returns:
             str: Failure notification
         """
-        return "<div class='alert alert-warning'><strong><i class='fas fa-exclamation-triangle text-warning'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
+        return "<div class='alert alert-warning'><strong><i class='fas fa-exclamation-triangle text-warning'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
+            message)
 
     @classmethod
-    def info(cls, message:str):
+    def info(cls, message: str):
         """Info Notification
 
         Args:
@@ -665,10 +666,11 @@ class Notify:
         Returns:
             str: Info notification 
         """
-        return "<div class='alert alert-info'><strong><i class='fas fa-info-circle text-info'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
+        return "<div class='alert alert-info'><strong><i class='fas fa-info-circle text-info'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
+            message)
 
     @classmethod
-    def danger(cls, message:str):
+    def danger(cls, message: str):
         """ Error Notification
 
         Args:
@@ -677,4 +679,5 @@ class Notify:
         Returns:
             str: Error notification
         """
-        return "<div class='alert alert-danger'><strong><i class='fas fa-exclamation-triangle text-danger'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
+        return "<div class='alert alert-danger'><strong><i class='fas fa-exclamation-triangle text-danger'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
+            message)

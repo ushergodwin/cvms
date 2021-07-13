@@ -9,12 +9,13 @@ from django.http import JsonResponse
 import json
 from datetime import datetime
 
-
 import matplotlib.pyplot as plt
+
 plt.switch_backend('agg')
 
 from io import StringIO
 import numpy as np
+
 
 # Register your models here.
 class Health:
@@ -43,14 +44,14 @@ class Health:
     @classmethod
     def return_graph(cls):
         fig = plt.figure()
-        graph = fig.add_subplot(1,2,1, 
-        title="Sample Bar Grap Showing Percentages of Vaccinated Citizens",
-        ylabel="Vaccination (in percentage %)",
-        xlabel="Population (in million)")
-        x = [20,14,16,15,15,10,8,6,4,1]
-        y = [10,20,30,40,50,60,70,80,90,100]
-        graph.bar(x,y)
-        #plt.style.use('fivethirtyeight')
+        graph = fig.add_subplot(1, 2, 1,
+                                title="Sample Bar Grap Showing Percentages of Vaccinated Citizens",
+                                ylabel="Vaccination (in percentage %)",
+                                xlabel="Population (in million)")
+        x = [20, 14, 16, 15, 15, 10, 8, 6, 4, 1]
+        y = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+        graph.bar(x, y)
+        # plt.style.use('fivethirtyeight')
         plt.plot()
         plt.close()
         imgdata = StringIO()
@@ -59,11 +60,11 @@ class Health:
 
         data = imgdata.getvalue()
         return data
-    
+
     @classmethod
     def vaccination_chart(cls, request):
         labels = ["Kampala", "Wakiso", "Jinja", "Entebbe", "Masaka", "Kabale", "Mbarara", "Kasese"]
-        data = [20000000,10000000,15000000,5000000,8000000,9000000,12000000,4000000]
+        data = [20000000, 10000000, 15000000, 5000000, 8000000, 9000000, 12000000, 4000000]
         content = {'labels': labels, 'data': data}
         return JsonResponse(content)
 
@@ -137,7 +138,7 @@ class Health:
                     "nationality": nationality,
                     "gender": gender,
                     "date_of_birth": String.replace("/", "-", date_of_birth),
-                    "nin_number" : nin_number,
+                    "nin_number": nin_number,
                     "card_no": card_no,
                     "expiry_date": String.replace("/", "-", expiry_date),
                     "village": String.to_upper(village),
@@ -149,7 +150,7 @@ class Health:
                     "email": email_address
                 }
 
-                #check if user exists
+                # check if user exists
                 where_data = {
                     "nin_number": nin_number,
                     "card_no": card_no,
@@ -164,7 +165,7 @@ class Health:
                         citizen_account_info = {
                             "password": Password.hash_password(prifix + phone_number),
                             "is_superuser": 0,
-                            "username": String.to_lower(surname+given_name),
+                            "username": String.to_lower(surname + given_name),
                             "first_name": surname,
                             "last_name": given_name,
                             "email": email_address,
@@ -174,22 +175,24 @@ class Health:
                         }
 
                         citizen_vaccination_data = {
-                            "vaccination_id" : Math.random_number(0, 99999999),
-                            "citizen_nin_id" : nin_number,
+                            "vaccination_id": Math.random_number(0, 99999999),
+                            "citizen_nin_id": nin_number,
                             "doze_status": "PARTIAL"
                         }
 
-                        #prepare citizen to receive the first doze
+                        # prepare citizen to receive the first doze
                         prepared = CitizenModel.prepare_citizen_doze(citizen_vaccination_data)
 
                         if prepared:
-                            #create the citizen's account automatically
+                            # create the citizen's account automatically
                             CitizenModel.create_citizen_account(citizen_account_info)
                             return HttpResponse(Notify.success("Citizen added successfully"))
                         else:
-                            return HttpResponse(Notify.failure("Oops, there was an error while preparing citizen for the first doze. please try again later!!"))
+                            return HttpResponse(Notify.failure(
+                                "Oops, there was an error while preparing citizen for the first doze. please try again later!!"))
                     else:
-                        return HttpResponse(Notify.failure("Oops, there was an error while adding the citizen. please try again later!!"))
+                        return HttpResponse(Notify.failure(
+                            "Oops, there was an error while adding the citizen. please try again later!!"))
                 else:
                     return HttpResponse(Notify.failure("Citizen already exits!! Please enter another citizen."))
             else:
@@ -238,7 +241,7 @@ class Health:
             return render(request, 'covidvms/health/first-doze.html', context)
         else:
             return redirect('/')
-        
+
     @classmethod
     def register_first_doze(cls, request, citizen):
         current_user = ""
@@ -264,5 +267,6 @@ class Health:
             return render(request, 'covidvms/health/register-first-doze.html', context)
         else:
             return redirect('/')
+
 
 admin.site.register(Covid19Vaccines)

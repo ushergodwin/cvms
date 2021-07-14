@@ -146,15 +146,14 @@ class DB:
         values = tuple((condition.values()))
         cls._wheredata += values
         sql = ""
-        if len(condition) >= 1:
+        if condition:
             sql += " WHERE " + keys[0] + " = %s"
         if len(condition) >= 2:
             sql += " AND " + keys[1] + " = %s"
-        if sec is not False:
-            if len(condition) >= 3:
+        if len(condition) >= 3:
+            if sec is not False:
                 sql += " AND " + keys[1] + " = %s"
-        else:
-            if len(condition) >= 3:
+            else:
                 sql += " OR " + keys[1] + " = %s"
         cls._where += sql
 
@@ -191,8 +190,7 @@ class DB:
         cls.__connect()
         cls._db.execute(sql) if len(cls._wheredata) == 0 else cls._db.execute(sql, cls._wheredata)
         cls._reset()
-        data = cls._db.fetchall()
-        return data
+        return cls._db.fetchall()
 
     @classmethod
     def not_empty(cls, collection):
@@ -203,10 +201,7 @@ class DB:
             bool: True if the tuple is not empty
         """
 
-        if collection is None:
-            return False
-        else:
-            return True
+        return collection is not None
 
     @classmethod
     def getOneValue(cls, column: str, table: str):
@@ -246,13 +241,9 @@ class DB:
         keys = data_values.keys()
         columns = (", ".join(keys))
         placeholder = ""
-        place = list()
         values = tuple(data_values.values())
         sql = "INSERT INTO " + table + " (" + columns + ") VALUES ("
-        pl = 0
-        while pl <= len(keys) - 1:
-            place.append("%s")
-            pl += 1
+        place = ["%s" for _ in range(len(keys) - 1 + 1)]
         placeholder += ", ".join(tuple(place))
         sql += placeholder + ")"
         cls.__connect()
@@ -263,10 +254,7 @@ class DB:
         cls._reset()
         row_count = cls._db.rowcount
         cls.__close()
-        if row_count > 0:
-            return True
-        else:
-            return False
+        return row_count > 0
 
     @classmethod
     def insertMany(cls, columns: list, table_name: str, table_data: list):
@@ -287,12 +275,8 @@ class DB:
         columns_names = (", ".join(tuple(columns)))
         keys = tuple(columns)
         placeholder = ""
-        place = list()
         sql = "INSERT INTO " + table_name + " (" + columns_names + ") VALUES ("
-        pl = 0
-        while pl <= len(keys) - 1:
-            place.append("%s")
-            pl += 1
+        place = ["%s" for _ in range(len(keys) - 1 + 1)]
         placeholder += ", ".join(tuple(place))
         sql += placeholder + ")"
         cls.__connect()
@@ -303,10 +287,7 @@ class DB:
         cls._reset()
         row_count = cls._db.rowcount
         cls.__close()
-        if row_count > 0:
-            return True
-        else:
-            return False
+        return row_count > 0
 
     @classmethod
     def update(cls, table_data: dict, table_name: str):
@@ -323,12 +304,8 @@ class DB:
 
         sql = "UPDATE " + table_name + " SET "
         key = table_data.keys()
-        column_list = []
         column_values = list(table_data.values())
-        ct = 0
-        while ct <= len(key) - 1:
-            column_list.append(tuple(key)[ct] + " = %s")
-            ct += 1
+        column_list = [tuple(key)[ct] + " = %s" for ct in range(len(key) - 1 + 1)]
         column_keys = ", ".join(tuple(column_list))
         sql += column_keys
         if cls._where == "":
@@ -342,10 +319,7 @@ class DB:
         cls._affectedRows = cls._db.rowcount
         row_count = cls._db.rowcount
         cls.__close()
-        if row_count > 0:
-            return True
-        else:
-            return False
+        return row_count > 0
 
     @classmethod
     def deleteAll(cls, table_name: str):
@@ -364,10 +338,7 @@ class DB:
         cls._affectedRows = cls._db.rowcount
         row_count = cls._db.rowcount
         cls.__close()
-        if row_count > 0:
-            return True
-        else:
-            return False
+        return row_count > 0
 
     @classmethod
     def trash(cls, table_name: str):
@@ -390,10 +361,7 @@ class DB:
         cls._affectedRows = cls._db.rowcount
         row_count = cls._db.rowcount
         cls.__close()
-        if row_count > 0:
-            return True
-        else:
-            return False
+        return row_count > 0
 
     @classmethod
     def query(cls, sql: str, query_data: list):

@@ -32,6 +32,13 @@ class Home:
         return redirect('/')
 
     @classmethod
+    def Admin_user(cls, request):  # -> HttpResponse:
+        # def Adminuser(cls,request:'covidvms/admin/admin-dashboard')->HttpResponse:
+        return render(request, 'covidvms/admin/dashboard.html', {})  # --> HttpResponse
+        # else
+        #    return redirect('/')
+
+    @classmethod
     def navbar(cls, request, doc):
         context = {
             "details": {}

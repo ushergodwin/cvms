@@ -31,5 +31,6 @@ urlpatterns = [
     path('health/view-citizens', admin.Health.view_citizens, name='view-citizens'),
     path('health/vaccination/first-doze', admin.Health.view_first_doze, name='view-first-doze'),
     path('health/vaccination/register/<str:citizen>', admin.Health.register_first_doze, name='register-first-doze'),
+    path('health/dashboard/Admin-us/', views.Home.Admin_user, name='Admin_user'),
 
 ]

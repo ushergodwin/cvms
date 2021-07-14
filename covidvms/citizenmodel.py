@@ -7,6 +7,7 @@ from django.utils import timezone
 
 from controller.ctrl.database import DB
 
+
 class CitizenModel(models.Model):
     __table = "covidvms_citizenmodel"
     __districts = "covidvms_ug"
@@ -30,9 +31,10 @@ class CitizenModel(models.Model):
 
     def __init__(cls, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-    
+
     def save_citizen(self):
         self.save()
+
     def __str__(self) -> str:
         return super().__str__()
 
@@ -46,31 +48,31 @@ class CitizenModel(models.Model):
         return DB.getAll("name", cls.__districts)
 
     @classmethod
-    def add_citizen(cls, citizen_data:dict):
+    def add_citizen(cls, citizen_data: dict):
         res = False
 
         DB.insertData(citizen_data, cls.__table)
-        
+
         res = True if DB.affectedRows() > 0 else res
 
         return res
-    
+
     @classmethod
-    def create_citizen_account(cls, citizen_data:dict):
+    def create_citizen_account(cls, citizen_data: dict):
         res = False
 
         DB.insertData(citizen_data, "auth_user")
-        
+
         res = True if DB.affectedRows() > 0 else res
 
         return res
 
     @classmethod
-    def prepare_citizen_doze(cls, citizen_data:dict):
+    def prepare_citizen_doze(cls, citizen_data: dict):
         res = False
 
         DB.insertData(citizen_data, "covidvms_covid19vaccination")
-        
+
         res = True if DB.affectedRows() > 0 else res
 
         return res
@@ -78,11 +80,11 @@ class CitizenModel(models.Model):
     @classmethod
     def get_all_citizens(cls):
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, village, parish, sub_county, county, district, phone_number, email"
-        
+
         return DB.getAll(columns, cls.__table)
 
     @classmethod
-    def citizen_exits(cls, where:dict = {}):
+    def citizen_exits(cls, where: dict = {}):
         res = False
         try:
 
@@ -100,30 +102,27 @@ class CitizenModel(models.Model):
         where = {'no_of_dozes': 0}
 
         join_tables = {
-            cls.__table:"nin_number",
-            cls.__vaccination_table:"citizen_nin_id"
+            cls.__table: "nin_number",
+            cls.__vaccination_table: "citizen_nin_id"
         }
 
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, village, parish, sub_county, county, district, phone_number, email"
-
 
         DB.where(where)
 
         return DB.join(columns, join_tables)
 
-
     @classmethod
     def citizen_for_first_doze(cls, citizen):
-    
+
         where = {'no_of_dozes': 0, 'citizen_nin_id': citizen}
 
         join_tables = {
-            cls.__table:"nin_number",
-            cls.__vaccination_table:"citizen_nin_id"
+            cls.__table: "nin_number",
+            cls.__vaccination_table: "citizen_nin_id"
         }
 
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email"
-
 
         DB.where(where)
 
@@ -145,8 +144,9 @@ class CitizenModel(models.Model):
                     "phone": phone_number,
                     "email": email
                 }
-        
+
         return citizen_data
+
 
 class Covid19Vaccines(models.Model):
     vaccine_id = models.CharField(primary_key=True, max_length=8)
@@ -162,6 +162,7 @@ class Covid19Vaccines(models.Model):
     def __str__(self) -> str:
         return super().__str__()
 
+
 class Covid19Vaccination(models.Model):
     vaccination_id = models.CharField(max_length=11, primary_key=True)
     citizen_nin = models.ForeignKey(CitizenModel, on_delete=models.SET_NULL, related_name="+", null=True)
@@ -173,12 +174,13 @@ class Covid19Vaccination(models.Model):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-    
+
     def save_vaccination(self):
         self.save()
 
     def __str__(self) -> str:
         return super().__str__()
+
 
 class Ug(models.Model):
     dist_id = models.AutoField(primary_key=True)

@@ -1,5 +1,5 @@
 {% load static %}
-    <div class="navbar navbar-expand-md navbar-dark bg-nvb sticky-top h-5" id="navbar">
+    <div class="navbar navbar-expand-md bg-nvb  sticky-top h-5" id="navbar">
             <!--<img src="{% static 'assets/images/logo-MOH-green.png' %}" class="container-fluid" height="100px"> -->
             <a href="#" class="navbar-brand">CVMS</a>
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
@@ -39,7 +39,7 @@
         </ul><br/><hr class="hr" />
         <a href="javascript:void(0)" id="settings-open"><i class="fas fa-cog"></i> Settings &nbsp;<i class="fas fa-angle-down" id="settings-down"></i> </a>
         <ul id="settings-list">
-            <li><a href=""><i class="fas fa-user-lock"></i> My Account</a></li>
+            <li><a href='{% url "covidvms:Admin_user" %}'><i class="fas fa-user-lock"></i> Admin Dashboard</a></li>
             <li><a href=""><i class="fas fa-user-shield"></i> Two Factor Authentication</a></li>
             <li><a href=""><i class="fas fa-key"></i> Change Password</a></li>
             <li><a href='{% url "covidvms:logout" logout="logout" %}'><i class="fas fa-power-off"></i> Logout?</a></li>

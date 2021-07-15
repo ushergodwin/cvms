@@ -53,29 +53,21 @@ class CitizenModel(models.Model):
 
         DB.insertData(citizen_data, cls.__table)
 
-        res = True if DB.affectedRows() > 0 else res
-
-        return res
+        return DB.affectedRows() > 0
 
     @classmethod
-    def create_citizen_account(cls, citizen_data: dict):
-        res = False
+    def create_citizen_account(cls, citizen_data:dict):
 
         DB.insertData(citizen_data, "auth_user")
 
-        res = True if DB.affectedRows() > 0 else res
-
-        return res
+        return DB.affectedRows() > 0
 
     @classmethod
-    def prepare_citizen_doze(cls, citizen_data: dict):
-        res = False
+    def prepare_citizen_doze(cls, citizen_data:dict):
 
         DB.insertData(citizen_data, "covidvms_covid19vaccination")
 
-        res = True if DB.affectedRows() > 0 else res
-
-        return res
+        return DB.affectedRows() > 0
 
     @classmethod
     def get_all_citizens(cls):

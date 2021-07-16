@@ -1,8 +1,8 @@
+{% extends '../base.html'%}
+
+{% block content %}
+
 {% load static %}
-{% include '../header.html' %}
-{% include '../nav.html' %}
-<main class="container-fluid">
-    <div class="main-body" id="main-body">
         <div class="row mt-5">
             <div class="col-md-12 col-lg-4 col-xl-4">
                 <h4 class="font-weight-bold">REPUBLIC OF UGANDA</h4>
@@ -163,9 +163,6 @@
                 </div>
             </div>
         </div>
-    </div>
-</main>
-{% include '../footer.html' %}
 <script>
     $(document).ready(()=> {
         $("#next").on('click', ()=> {$(".first-row").toggle(500);$(".second-row").toggle(500);});$("#previous").on('click', ()=> {$(".first-row").toggle(500);$(".second-row").toggle(500);});
@@ -272,5 +269,5 @@ function ValidateFname(fname) {
         }
     }
 </script>
-</body>
-</html>
+
+{% endblock %}

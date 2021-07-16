@@ -49,7 +49,6 @@ class CitizenModel(models.Model):
 
     @classmethod
     def add_citizen(cls, citizen_data: dict):
-        res = False
 
         DB.insertData(citizen_data, cls.__table)
 
@@ -105,6 +104,22 @@ class CitizenModel(models.Model):
         return DB.join(columns, join_tables)
 
     @classmethod
+    def get_citizen_for_second_doze(cls):
+
+        where = {'no_of_dozes': 1}
+
+        join_tables = {
+            cls.__table: "nin_number",
+            cls.__vaccination_table: "citizen_nin_id"
+        }
+
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, village, parish, sub_county, county, district, phone_number, email"
+
+        DB.where(where)
+
+        return DB.join(columns, join_tables)
+
+    @classmethod
     def citizen_for_first_doze(cls, citizen):
 
         where = {'no_of_dozes': 0, 'citizen_nin_id': citizen}
@@ -139,6 +154,42 @@ class CitizenModel(models.Model):
 
         return citizen_data
 
+    @classmethod
+    def citizen_for_second_doze(cls, citizen):
+
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email"
+        columns += ", vaccination_center, name "
+
+        sql = "SELECT " + columns + " FROM " + cls.__table + " INNER JOIN " + cls.__vaccination_table
+        sql += " ON " + cls.__table + ".nin_number = " + cls.__vaccination_table + ".citizen_nin_id"
+        sql += " INNER JOIN covidvms_covid19vaccines  ON " + cls.__vaccination_table + ".vaccine_type_id"
+        sql += " = covidvms_covid19vaccines.vaccine_id"
+        sql += " WHERE " + cls.__vaccination_table + ".no_of_dozes = %s"
+        sql += " AND " + cls.__vaccination_table +".citizen_nin_id = %s"
+
+        citizen_data = {}
+
+        data = DB.query(sql, [1, citizen])
+
+        if DB.not_empty(data):
+            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, vaccination_center, name  in data:
+                citizen_data = {
+                    "nin": nin_number,
+                    "sur_name": sur_name,
+                    "given_name": given_name,
+                    "nationality": nationality,
+                    "sex": gender,
+                    "dob": date_of_birth,
+                    "card_no": card_no,
+                    "expiry_date": expiry_date,
+                    "phone": phone_number,
+                    "email": email,
+                    "vaccination_center": vaccination_center,
+                    "vaccine_name": name
+                }
+
+        return citizen_data
+
 
 class Covid19Vaccines(models.Model):
     vaccine_id = models.CharField(primary_key=True, max_length=8)
@@ -163,6 +214,7 @@ class Covid19Vaccination(models.Model):
     taken_at = models.DateTimeField(null=True)
     next_doze_on = models.DateTimeField(null=True)
     doze_status = models.CharField(max_length=20, default="PARTIAL")
+    vaccination_center = models.CharField(max_length=50, default="Mulago")
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -172,6 +224,16 @@ class Covid19Vaccination(models.Model):
 
     def __str__(self) -> str:
         return super().__str__()
+
+    @classmethod
+    def register_first_doze(cls, data:dict, nin_id):
+
+        DB.where({'citizen_nin_id': nin_id})
+        
+        DB.update(data, "covidvms_covid19vaccination")
+
+        return DB.affectedRows() > 0
+
 
 
 class Ug(models.Model):
@@ -183,3 +245,16 @@ class Ug(models.Model):
 
     def __str__(self) -> str:
         return super().__str__()
+
+class Vaccination_centers(models.Model):
+    center_id = models.AutoField(primary_key=True)
+    center_name = models.CharField(max_length=100)
+
+    def __init_(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+    def __str__(self):
+        return super().__str__()
+    
+    class Meta:
+        ordering = ('center_name',)

@@ -31,6 +31,9 @@ urlpatterns = [
     path('health/view-citizens', admin.Health.view_citizens, name='view-citizens'),
     path('health/vaccination/first-doze', admin.Health.view_first_doze, name='view-first-doze'),
     path('health/vaccination/register/<str:citizen>', admin.Health.register_first_doze, name='register-first-doze'),
-    path('health/dashboard/Admin-us/', views.Home.Admin_user, name='Admin_user'),
+    path('admin/dashboard', views.Home.Admin_user, name='Admin_user'),
+    path("vaccination/register/first-doze", admin.Health.save_first_doze, name="save-first-doze"),
+    path('health/vaccination/second-doze', admin.Health.view_second_doze, name='view-second-doze'),
+    path('health/vaccination/register/second-doze/<str:citizen>', admin.Health.register_second_doze, name='register-second-doze'),
 
 ]

@@ -6,7 +6,7 @@ from django.http import JsonResponse
 import json
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-
+from covidvms.usermodel import UserModel
 
 # Create your views here.
 class Home:
@@ -34,9 +34,19 @@ class Home:
     @classmethod
     def Admin_user(cls, request):  # -> HttpResponse:
         # def Adminuser(cls,request:'covidvms/admin/admin-dashboard')->HttpResponse:
-        return render(request, 'covidvms/admin/dashboard.html', {})  # --> HttpResponse
-        # else
-        #    return redirect('/')
+        if 'current' not in request.session.keys():
+            return redirect('/')
+
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+
+        context = {
+            "title": 'Admin | Panel',
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "page": "ALL CITIZEN",
+        }
+        return render(request, 'covidvms/admin/dashboard.html', context)  # --> HttpResponse
 
     @classmethod
     def navbar(cls, request, doc):

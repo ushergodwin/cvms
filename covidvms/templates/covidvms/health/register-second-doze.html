@@ -60,53 +60,36 @@
 
                         <div class="col-md-12 col-lg-6 col-xl-6">
                             <div class="card card-body shadow">
-                                <h4>GIVE <span class="text-success">{{citizen.sur_name}} {{citizen.given_name}}</span> {% if citizen.sex == 'M' %} his {% else %} her {% endif%} first doze </h4>
+                                <h4>GIVE <span class="text-success">{{citizen.sur_name}} {{citizen.given_name}}</span> {% if citizen.sex == 'M' %} his {% else %} her {% endif%} second doze </h4>
                                 <br/>
-                                <form action="{% url 'covidvms:save-first-doze'%}" method="POST" id="firstDozeForm">
+                                <form action="" method="POST" id="secondDozeForm">
                                     <div class="form-group">
-                                        <label for="vaccine_name">Vaccine Name</label>
-                                        <select class="custom-select" name="vaccine" id="vaccine">
-                                            <option value="">--- select vaccine --- </option>
-                                            {% for vaccine in vaccines %}
-                                                <option value="{{vaccine.vaccine_id}}">{{vaccine.name}} ( {{vaccine.dozes}} shots)</option>
-                                            {% endfor %}
-                                        </select>
+                                        <label for="center">Vaccine Given</label>
+                                        <input type="text" id="centers" value="{{citizen.vaccine_name}}" class="form-control" name="center" readonly/>
                                     </div>
                                     <div class="row"> 
-                                        <div class="col-md-12 col-lg-6 col-xl-6">
-                                            <div class="form-group">
-                                                <label for="taken_date">Take On ({{current_date}})</label>
-                                                <input type="date" name="taken_date" class="form-control" value="{{date}}"/>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-12 col-lg-6 col-xl-6">
-                                            <label for="next_doze_date">Next Doze({{next}})</label>
-                                            <input type="date" name="next_doze_date" class="form-control" value="{{next_dd}}"/>
+                                        <div class="col-md-12 col-lg-12 col-xl-12">
+                                            <label for="next_doze_date">Next Doze to be received on ({{next}})</label>
+                                            <input type="date" id="next_doze_date" name="next_doze_date" class="form-control" value="{{next_dd}}" readonly/>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="center">Vaccination Center</label>
-                                        <input type="text" id="centers" placeholder="-- select center, or type center name --" class="form-control" list="center_list" name="center" required/>
-                                        <datalist id="center_list">
-                                            {% for center in centers %}
-                                                <option value="{{center.center_name}}">{{center.center_name}}</option>
-                                            {% endfor %}
-                                        </datalist>
+                                        <input type="text" id="centers" value="{{citizen.vaccination_center}}" class="form-control" name="center" readonly/>
                                     </div>
                                     <em class="text-info">
-                                        The Citizen should only be registed for the first doze after having given 
-                                        consent and received the vaccine.
+                                        {{citizen.sur_name}} must have received the first doze before getting the second one.
                                     </em>
                                     <div class="form-group">
                                         <div class="row justify-content-between">
                                             {% csrf_token %}
                                             <input type="hidden" name="citizen_nin_id" value="{{citizen.nin}}"/>
-                                            <input type="hidden" name="register_first_doze" value="1"/>
-                                            <button type="submit" class="btn btn-success" id="first-doze-btn">Give First Doze <i class="fas fa-check-circle"></i></button>
-                                            <a href="{% url 'covidvms:view-first-doze'%}" class="btn btn-warning">Cancel</a>
+                                            <input type="hidden" name="register_second_doze" value="1"/>
+                                            <button type="submit" class="btn btn-success" id="second-doze-btn">Give Second Doze <i class="fas fa-check-circle"></i></button>
+                                            <a href="{% url 'covidvms:view-second-doze'%}" class="btn btn-warning">Cancel</a>
                                         </div>
                                     </div>
-                                    <div class="first-doze-response"></div>
+                                    <div class="second-doze-response"></div>
                                 </form>
                             </div>
                         </div>
@@ -117,32 +100,30 @@
             </div>
         </div>
 <script>
+    var today = new Date();let next_date = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();let next_doze_date = document.getElementById('next_doze_date');if (next_date !== next_doze_date.value){let btn = document.getElementById('second-doze-btn');btn.setAttribute('disabled', true);btn.setAttribute('title', 'You can not give this person a second dose because it is not yet the right time to receive it!');btn.innerHTML = "Give Second Dose <i class='fas fa-times-circle'></i>";btn.classList.remove('btn-success');btn.classList.add('btn-danger');}
     $(document).ready(()=> {
-        $("#firstDozeForm").on('submit', function(event){
+        $("#secondDozeForm").on('submit', function(event){
             event.preventDefault();
-            if ($("#vaccine").val() !== "" && $("#centers") !== "")
-            {
                 $.ajax({
                     url: $(this).attr('action'),
                     type: "POST",
                     data: $(this).serializeArray(),
                     beforeSend: () => {
-                        $("#first-doze-btn").html("<span class='spinner-border spinner-border-sm text-light'></span> processing...");
-                        $("#first-doze-btn").attr('disabled', true);
+                        $("#second-doze-btn").html("<span class='spinner-border spinner-border-sm text-light'></span> processing...");
+                        $("#second-doze-btn").attr('disabled', true);
                     },
                     success: (res) => {
-                        $(".first-doze-response").html(res);
+                        $(".second-doze-response").html(res);
                     },
                     complete: () => {
-                        $("#first-doze-btn").removeAttr('disabled');
-                        $("#first-doze-btn").html("First Doze Given <i class='fas fa-check-circle'></i>");
-                        $(".first-doze-response").fadeOut(7000);
+                        $("#second-doze-btn").removeAttr('disabled');
+                        $("#second-doze-btn").html("Second Doze Given <i class='fas fa-check-circle'></i>");
+                        $(".second-doze-response").fadeOut(7000);
                         setTimeout(() => {
                             history.back();
                         }, 7000);
                     }
                 })
-            }
         });
     });
 </script>

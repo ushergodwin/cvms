@@ -27,3 +27,21 @@
 </head>
 <body>
 <div class="se-pre-con"></div>
+
+{% block content %}
+
+{% endblock %}
+
+<script>
+    $(window).on('load', function() {
+	    $(".se-pre-con").fadeOut("slow");
+    });
+</script>
+<script src="{% static 'assets/cvmsjs/cvms.js' %}"></script>
+<script src="{% static 'assets/bootstrap/js/popper.min.js' %}"></script>
+<script src="{% static 'assets/bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'assets/bootstrap/tables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/bootstrap/tables/jquery.dataTables.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" integrity="sha512-VCHVc5miKoln972iJPvkQrUYYq7XpxXzvqNfiul1H4aZDwGBGC0lq373KNleaB2LpnC2a/iNfE5zoRYmB4TRDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

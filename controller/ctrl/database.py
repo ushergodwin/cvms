@@ -317,6 +317,7 @@ class DB:
         cls._db.execute(sql, update_data)
         cls._db_instance.commit()
         cls._affectedRows = cls._db.rowcount
+        cls._reset()
         row_count = cls._db.rowcount
         cls.__close()
         return row_count > 0

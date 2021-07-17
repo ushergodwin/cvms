@@ -137,10 +137,9 @@ class Math:
 
 
 class File:
-    open = False
 
     def __init__(self):
-        self.open = True
+        pass
 
     @classmethod
     def open(cls, filename):
@@ -330,7 +329,7 @@ class String:
         Args:
             string (str): A string to remove empty strings
         Returns:
-            str: A trimed string
+            str: A trimmed string
         """
         return "{}".format(string).strip()
 
@@ -399,7 +398,7 @@ class String:
         """Check empty values.
 
         Args:
-            values (list): A list of varaibles to check
+            values (list): A list of variables to check
 
         Returns:
             bool: True if the values are not empty and False otherwise
@@ -435,9 +434,9 @@ class Date:
         Returns:
             string: Date and time
         """
-        format = '%Y-%m-%d %H:%M:%S'
-        format = '%Y-%m-%d %i:%M:%S%p' if clock == 24 else format
-        return datetime.today().strftime(format)
+        date_format = '%Y-%m-%d %H:%M:%S'
+        date_format = '%Y-%m-%d %i:%M:%S%p' if clock == 24 else date_format
+        return datetime.today().strftime(date_format)
 
     @classmethod
     def dbdate(cls, clock: int = 24, hours: bool = True):
@@ -445,16 +444,18 @@ class Date:
 
         Args:
             clock (int, optional): Clock, either 12 or 24 hour clock. Defaults to 24.
-
+            :param hours:
+            :param clock:
         Returns:
             string: Date and time
+
         """
-        format = '%Y-%m-%d %H:%M:%S'
-        format = '%Y-%m-%d %i:%M:%S%p' if clock == 24 else format
+        date_format = '%Y-%m-%d %H:%M:%S'
+        date_format = '%Y-%m-%d %i:%M:%S%p' if clock == 24 else date_format
 
         if not hours:
-            format = '%Y-%m-%d'
-        return datetime.today().strftime(format)
+            date_format = '%Y-%m-%d'
+        return datetime.today().strftime(date_format)
 
     @classmethod
     def month(cls):
@@ -498,7 +499,6 @@ class Date:
                      "August", "September", "November", "December")
         m_in_short = ("Jan", "Feb", "March", "April", "May", "June", "July",
                       "Aug", "Sep", "Nov", "Dec",)
-        text = ""
         text = m_in_short[cls.month()]
         if uppercase and not full_form:
             text = String.to_upper(m_in_short[cls.month()])
@@ -521,7 +521,7 @@ class Date:
         """
         d_in_full = ("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday")
         d_in_short = ("Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun")
-        text = ""
+
         text = d_in_short[cls.week_day()]
         if uppercase and not full_form:
             get_txt = d_in_short[cls.week_day()]
@@ -545,7 +545,7 @@ class Date:
         return datetime.now().date()
 
     @classmethod
-    def strtotime(cls, period_in_number=1, period_in_words="days", only_date=False, ISO: bool = False):
+    def strtotime(cls, period_in_number=1, period_in_words="days", only_date=False, iso: bool = False):
         """Convert a string to date.
 
         Args:
@@ -554,7 +554,7 @@ class Date:
 
             Allowed values (day/days, week/weeks, month/months, year/years)
             only_date (bool, optional): Returns only the date without time. Defaults to False.
-            ISO (bool, optional): Retuns the date in a format of YY-mm-dd/ Y-m-d. Defaults to False.
+            iso (bool, optional): Returns the date in a format of YY-mm-dd/ Y-m-d. Defaults to False.
 
         Returns:
             date: The formulated date
@@ -562,19 +562,21 @@ class Date:
         Get the date of the next week on today (1 week)
         """
         import datetime
-        format = datetime.datetime.now()
+        date_format = datetime.datetime.now()
         if only_date:
-            format = datetime.datetime.now().date()
+            date_format = datetime.datetime.now().date()
         if period_in_words in ["month", "months"]:
             weeks = period_in_number * 4
             period_in_number = weeks * 7
 
+        if period_in_words in ["week", "weeks"]:
+            period_in_number = period_in_number * 7
+
         if period_in_words in ["year", "years"]:
             period_in_number = period_in_number * 365
-            period_in_words = "days"
 
-        extract = format + datetime.timedelta(days=period_in_number)
-        if ISO:
+        extract = date_format + datetime.timedelta(days=period_in_number)
+        if iso:
             extract = extract.strftime('%Y-%m-%d')
         return extract
 
@@ -593,14 +595,14 @@ class NIN:
         """
         num = Math.random_number(0, 10000000)
         string = String.shuffle("ABCDEFGHIJKLMNOPQRSTVWXYZ")
-        sh_str = String.slice_str(string, 3, 7)
+        sh_str = String.sub_str(string, 3, 7)
         return "CM" + String.to_string(num) + sh_str
 
     @classmethod
     def validate(cls, nin: str):
         """
 
-        Arges:
+        Args:
             nin: The NIN to check if it has a correct format
         Returns: 
             bool: True if the number is in a correct format and False otherwise
@@ -626,8 +628,9 @@ class Notify:
         Returns:
             str: success notification
         """
-        return "<div class='alert alert-success'><strong><i class='fas fa-check-circle text-success'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
-            message)
+        return "<div class='alert alert-success'><strong><i class='fas fa-check-circle " \
+               "text-success'></i></strong> {} <button type='button' class='close' " \
+               "data-dismiss='alert'>&times;</button></div>".format(message)
 
     @classmethod
     def failure(cls, message: str):
@@ -639,8 +642,9 @@ class Notify:
         Returns:
             str: Failure notification
         """
-        return "<div class='alert alert-warning'><strong><i class='fas fa-exclamation-triangle text-warning'></i></strong> {} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
-            message)
+        return "<div class='alert alert-warning'><strong><i class='fas fa-exclamation-triangle " \
+               "text-warning'></i></strong> {} <button type='button' class='close' " \
+               "data-dismiss='alert'>&times;</button></div>".format(message)
 
     @classmethod
     def info(cls, message: str):
@@ -652,8 +656,8 @@ class Notify:
         Returns:
             str: Info notification 
         """
-        return "<div class='alert alert-info'><strong><i class='fas fa-info-circle text-info'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
-            message)
+        return "<div class='alert alert-info'><strong><i class='fas fa-info-circle text-info'></i></strong> {} " \
+               "<button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(message)
 
     @classmethod
     def danger(cls, message: str):
@@ -665,5 +669,6 @@ class Notify:
         Returns:
             str: Error notification
         """
-        return "<div class='alert alert-danger'><strong><i class='fas fa-exclamation-triangle text-danger'></i></strong> {message} <button type='button' class='close' data-dismiss='alert'>&times;</button></div>".format(
-            message)
+        return "<div class='alert alert-danger'><strong><i class='fas fa-exclamation-triangle " \
+               "text-danger'></i></strong> {} <button type='button' class='close' " \
+               "data-dismiss='alert'>&times;</button></div>".format(message)

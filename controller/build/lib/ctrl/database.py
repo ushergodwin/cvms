@@ -39,6 +39,7 @@ if DB_DRIVER == "mysqlconnector":
         DRIVER = mysql.connector
     except ImportError:
         raise ImportError()
+    # any other DB_DRIVER needed
 
 
 class DB:
@@ -56,9 +57,12 @@ class DB:
     _affectedRows = 0
     _orderBy = ""
     _lastId = []
+    # _firstid= "" mine
 
     def __int__(self):
         self._db = self._db_instance.cursor()
+        # self._db_instance.cursor()
+        # return self._db_instance.cursor()
 
     @staticmethod
     def getDriver():
@@ -228,7 +232,7 @@ class DB:
         cls.__close()
         if cls.not_empty(value):
             res = value[0]
-        
+
         return res
 
     @classmethod

@@ -1,20 +1,17 @@
-from django.contrib import admin
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
-from controller.ctrl.controller import File, Math, Notify, String, Date, NIN, Password
-from covidvms.models import Auth
-from covidvms.usermodel import UserModel
-from covidvms.citizenmodel import CitizenModel, Covid19Vaccines, Ug, Vaccination_centers, Covid19Vaccination
-from django.http import JsonResponse
-import json
 from datetime import datetime
 
 import matplotlib.pyplot as plt
+from django.contrib import admin
+from django.http import HttpResponse
+from django.http import JsonResponse
+from django.shortcuts import redirect, render
+
+from controller.ctrl.controller import Math, Notify, String, Date, Password
+from covidvms.citizenmodel import CitizenModel, Covid19Vaccines, Ug, Vaccination_centers, Covid19Vaccination
+from covidvms.usermodel import UserModel
+from io import StringIO
 
 plt.switch_backend('agg')
-
-from io import StringIO
-import numpy as np
 
 
 # Register your models here.
@@ -22,7 +19,6 @@ class Health:
 
     @classmethod
     def index(cls, request):
-        current_user = ""
         if 'current' not in request.session.keys():
             return redirect('/')
         current_user = request.session.get('current')
@@ -64,7 +60,6 @@ class Health:
 
     @classmethod
     def add_citizen(cls, request):
-        current_user = ""
         if 'current' not in request.session.keys():
             return redirect('/')
         current_user = request.session.get('current')
@@ -82,7 +77,7 @@ class Health:
     @classmethod
     def register_citizen(cls, request):
 
-        if request.method != "POST" or not request.POST.get('add_citizen'):
+        if request.method != "POST" or not request.POST.get('add_citizen'):  # here
             return HttpResponse(Notify.info("Request not recognized"))
         surname = String.trim(request.POST.get('surname'))
         given_name = String.trim(request.POST.get('givenname'))
@@ -153,10 +148,10 @@ class Health:
         if not insert_citizen:
             return HttpResponse(Notify.failure(
                 "Oops, there was an error while adding the citizen. please try again later!!"))
-        prifix = "0"
+        prefix = "0"
 
         citizen_account_info = {
-            "password": Password.hash_password(prifix + phone_number),
+            "password": Password.hash_password(prefix + phone_number),
             "is_superuser": 0,
             "username": String.to_lower(surname + given_name),
             "first_name": surname,
@@ -186,7 +181,6 @@ class Health:
 
     @classmethod
     def view_citizens(cls, request):
-        current_user = ""
         if 'current' not in request.session.keys():
             return redirect('/')
         current_user = request.session.get('current')
@@ -200,11 +194,9 @@ class Health:
             "citizens": CitizenModel.get_all_citizens()
         }
         return render(request, 'covidvms/health/view-citizens.html', context)
-            
 
     @classmethod
     def view_first_doze(cls, request):
-        current_user = ""
         if 'current' not in request.session.keys():
             return redirect('/')
         current_user = request.session.get('current')
@@ -221,7 +213,6 @@ class Health:
 
     @classmethod
     def register_first_doze(cls, request, citizen):
-        current_user = ""
         if 'current' not in request.session.keys():
             return redirect('/')
         current_user = request.session.get('current')
@@ -245,28 +236,29 @@ class Health:
     @classmethod
     def save_first_doze(cls, request):
         if request.method != "POST" and not request.POST.get('register_first_doze'):
-            return HttpResponse(Notify.failure("An error occured while processing your request. Please contact the site admin."))
-        
+            return HttpResponse(
+                Notify.failure("An error occurred while processing your request. Please contact the site admin."))
+
         doze_data = {
             "no_of_dozes": 1,
             "taken_at": request.POST.get('taken_date'),
             "next_doze_on": request.POST.get('next_doze_date'),
-       
+            "vaccine_type_id": request.POST.get('vaccine'),
             "vaccination_center": request.POST.get('center')
         }
 
         citizen_nin_id = request.POST.get('citizen_nin_id')
-        
+
         if not Covid19Vaccination.register_first_doze(doze_data, citizen_nin_id):
-            return HttpResponse(Notify.failure("Something went wrong and processing the request. Please try again later!"))
-        
-        #notify user for the next doze by email or phone number
-        
+            return HttpResponse(
+                Notify.failure("Something went wrong while processing the request. Please try again later!"))
+
+        # notify user for the next doze by email or phone number
+
         return HttpResponse(Notify.success("Citizen registered for the first doze successfully"))
 
     @classmethod
     def view_second_doze(cls, request):
-        current_user = ""
         if 'current' not in request.session.keys():
             return redirect('/')
         current_user = request.session.get('current')
@@ -280,10 +272,9 @@ class Health:
             "citizens": CitizenModel.get_citizen_for_second_doze()
         }
         return render(request, 'covidvms/health/second-doze.html', context)
-    
+
     @classmethod
     def register_second_doze(cls, request, citizen):
-        current_user = ""
         if 'current' not in request.session.keys():
             return redirect('/')
         current_user = request.session.get('current')
@@ -299,7 +290,27 @@ class Health:
             "next_dd": Date.strtotime(21, "days", True, True),
         }
         return render(request, 'covidvms/health/register-second-doze.html', context)
-    
+
+    @classmethod
+    def save_second_doze(cls, request):
+        if request.method != "POST" and not request.POST.get('register_second_doze'):
+            return HttpResponse(
+                Notify.failure("An error occurred while processing your request. Please contact the site admin."))
+
+        doze_data = {
+            "no_of_dozes": 2,
+            "doze_status": "FULLY"
+        }
+
+        citizen_nin_id = request.POST.get('citizen_nin_id')
+
+        if not Covid19Vaccination.register_first_doze(doze_data, citizen_nin_id):
+            return HttpResponse(
+                Notify.failure("Something went wrong while processing the request. Please try again later!"))
+
+        # notify user for the next doze by email or phone number
+
+        return HttpResponse(Notify.success("Citizen registered for the second doze successfully"))
 
 
 admin.site.register(Covid19Vaccines)

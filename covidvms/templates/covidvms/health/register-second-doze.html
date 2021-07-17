@@ -62,7 +62,7 @@
                             <div class="card card-body shadow">
                                 <h4>GIVE <span class="text-success">{{citizen.sur_name}} {{citizen.given_name}}</span> {% if citizen.sex == 'M' %} his {% else %} her {% endif%} second doze </h4>
                                 <br/>
-                                <form action="" method="POST" id="secondDozeForm">
+                                <form action="{% url 'covidvms:save-second-doze'%} " method="POST" id="secondDozeForm">
                                     <div class="form-group">
                                         <label for="center">Vaccine Given</label>
                                         <input type="text" id="centers" value="{{citizen.vaccine_name}}" class="form-control" name="center" readonly/>
@@ -100,7 +100,7 @@
             </div>
         </div>
 <script>
-    var today = new Date();let next_date = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();let next_doze_date = document.getElementById('next_doze_date');if (next_date !== next_doze_date.value){let btn = document.getElementById('second-doze-btn');btn.setAttribute('disabled', true);btn.setAttribute('title', 'You can not give this person a second dose because it is not yet the right time to receive it!');btn.innerHTML = "Give Second Dose <i class='fas fa-times-circle'></i>";btn.classList.remove('btn-success');btn.classList.add('btn-danger');}
+    //const today = new Date();let next_date = today.getDate() + "/" + today.getMonth() + "/" + today.getFullYear();let next_doze_date = document.getElementById('next_doze_date');if (next_date !== next_doze_date.value){let btn = document.getElementById('second-doze-btn');btn.setAttribute('disabled', true);btn.setAttribute('title', 'You can not give this person a second dose because it is not yet the right time to receive it!');btn.innerHTML = "Give Second Dose <i class='fas fa-times-circle'></i>";btn.classList.remove('btn-success');btn.classList.add('btn-danger');}
     $(document).ready(()=> {
         $("#secondDozeForm").on('submit', function(event){
             event.preventDefault();

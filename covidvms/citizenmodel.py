@@ -1,9 +1,5 @@
 from django.db import models
-from django.db.models.base import Model
 from django.db.models.fields import IntegerField
-from datetime import date, datetime
-
-from django.utils import timezone
 
 from controller.ctrl.database import DB
 
@@ -29,7 +25,7 @@ class CitizenModel(models.Model):
     phone_number = models.CharField(max_length=13)
     email = models.EmailField(max_length=65)
 
-    def __init__(cls, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
     def save_citizen(self):
@@ -43,7 +39,7 @@ class CitizenModel(models.Model):
         """Get all available districts in Uganda
 
         Returns:
-            tupple: Available districts in the system
+            tuple: Available districts in the system
         """
         return DB.getAll("name", cls.__districts)
 
@@ -55,14 +51,14 @@ class CitizenModel(models.Model):
         return DB.affectedRows() > 0
 
     @classmethod
-    def create_citizen_account(cls, citizen_data:dict):
+    def create_citizen_account(cls, citizen_data: dict):
 
         DB.insertData(citizen_data, "auth_user")
 
         return DB.affectedRows() > 0
 
     @classmethod
-    def prepare_citizen_doze(cls, citizen_data:dict):
+    def prepare_citizen_doze(cls, citizen_data: dict):
 
         DB.insertData(citizen_data, "covidvms_covid19vaccination")
 
@@ -70,12 +66,15 @@ class CitizenModel(models.Model):
 
     @classmethod
     def get_all_citizens(cls):
-        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, village, parish, sub_county, county, district, phone_number, email"
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
+                  "village, parish, sub_county, county, district, phone_number, email "
 
         return DB.getAll(columns, cls.__table)
 
     @classmethod
-    def citizen_exits(cls, where: dict = {}):
+    def citizen_exits(cls, where=None):
+        if where is None:
+            where = {}
         res = False
         try:
 
@@ -97,7 +96,8 @@ class CitizenModel(models.Model):
             cls.__vaccination_table: "citizen_nin_id"
         }
 
-        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, village, parish, sub_county, county, district, phone_number, email"
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
+                  "village, parish, sub_county, county, district, phone_number, email "
 
         DB.where(where)
 
@@ -113,7 +113,8 @@ class CitizenModel(models.Model):
             cls.__vaccination_table: "citizen_nin_id"
         }
 
-        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, village, parish, sub_county, county, district, phone_number, email"
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
+                  "village, parish, sub_county, county, district, phone_number, email "
 
         DB.where(where)
 
@@ -129,7 +130,8 @@ class CitizenModel(models.Model):
             cls.__vaccination_table: "citizen_nin_id"
         }
 
-        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email"
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
+                  "phone_number, email "
 
         DB.where(where)
 
@@ -137,7 +139,7 @@ class CitizenModel(models.Model):
 
         data = DB.join(columns, join_tables)
 
-        if DB.not_empty(data):
+        if DB.not_empty(tuple(data)):
             for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email in data:
                 citizen_data = {
                     "nin": nin_number,
@@ -157,7 +159,8 @@ class CitizenModel(models.Model):
     @classmethod
     def citizen_for_second_doze(cls, citizen):
 
-        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email"
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
+                  "phone_number, email "
         columns += ", vaccination_center, name "
 
         sql = "SELECT " + columns + " FROM " + cls.__table + " INNER JOIN " + cls.__vaccination_table
@@ -165,14 +168,14 @@ class CitizenModel(models.Model):
         sql += " INNER JOIN covidvms_covid19vaccines  ON " + cls.__vaccination_table + ".vaccine_type_id"
         sql += " = covidvms_covid19vaccines.vaccine_id"
         sql += " WHERE " + cls.__vaccination_table + ".no_of_dozes = %s"
-        sql += " AND " + cls.__vaccination_table +".citizen_nin_id = %s"
+        sql += " AND " + cls.__vaccination_table + ".citizen_nin_id = %s"
 
         citizen_data = {}
 
         data = DB.query(sql, [1, citizen])
 
         if DB.not_empty(data):
-            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, vaccination_center, name  in data:
+            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, vaccination_center, name in data:
                 citizen_data = {
                     "nin": nin_number,
                     "sur_name": sur_name,
@@ -226,14 +229,20 @@ class Covid19Vaccination(models.Model):
         return super().__str__()
 
     @classmethod
-    def register_first_doze(cls, data:dict, nin_id):
-
+    def register_first_doze(cls, data: dict, nin_id):
         DB.where({'citizen_nin_id': nin_id})
-        
+
         DB.update(data, "covidvms_covid19vaccination")
 
         return DB.affectedRows() > 0
 
+    @classmethod
+    def register_second_doze(cls, data: dict, nin_id):
+        DB.where({'citizen_nin_id': nin_id})
+
+        DB.update(data, "covidvms_covid19vaccination")
+
+        return DB.affectedRows() > 0
 
 
 class Ug(models.Model):
@@ -246,6 +255,7 @@ class Ug(models.Model):
     def __str__(self) -> str:
         return super().__str__()
 
+
 class Vaccination_centers(models.Model):
     center_id = models.AutoField(primary_key=True)
     center_name = models.CharField(max_length=100)
@@ -255,6 +265,6 @@ class Vaccination_centers(models.Model):
 
     def __str__(self):
         return super().__str__()
-    
+
     class Meta:
         ordering = ('center_name',)

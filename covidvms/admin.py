@@ -6,7 +6,11 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
-from controller.ctrl.controller import Math, Notify, String, Date, Password
+from pycsql.core.manager import Math
+from pycsql.core.manager import Notify
+from pycsql.core.manager import String
+from pycsql.core.manager import Date
+from pycsql.core.manager import Password
 from covidvms.citizenmodel import CitizenModel, Covid19Vaccines, Ug, Vaccination_centers, Covid19Vaccination
 from covidvms.usermodel import UserModel
 from io import StringIO

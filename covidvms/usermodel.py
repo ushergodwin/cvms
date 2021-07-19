@@ -1,6 +1,6 @@
 from django.db import models
 
-from controller.ctrl.database import DB
+from pycsql.db.pycsql import pycsql
 
 from django.core.exceptions import ValidationError
 
@@ -51,8 +51,8 @@ class UserModel(models.Model):
         except ValidationError as e:
             column_key = "username"
 
-        DB.where({column_key: cls.__user})
-        user_data = DB.getOneRow('first_name, last_name', 'auth_user')
+        pycsql.where({column_key: cls.__user})
+        user_data = pycsql.getOneRow('first_name, last_name', 'auth_user')
         if len(user_data) != 0:
             for first_name, last_name in user_data:
                 data = {

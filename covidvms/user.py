@@ -1,8 +1,8 @@
 from django.conf import settings
 
-from controller.ctrl.controller import Password
-from controller.ctrl.controller import String
-from controller.ctrl.database import DB
+from pycsql.core.manager import Password
+from pycsql.core.manager import String
+from pycsql.db.pycsql import pycsql
 
 settings.configure()
 
@@ -38,7 +38,7 @@ def name():
 def password():
     user_pass = input("\nEnter Password: ")
     user_pass_lower = user_pass.lower()
-    end(user_pass_lower)            #password is returned in lower case ,, should be rectified later
+    end(user_pass_lower)  # password is returned in lower case ,, should be rectified later
     if user_pass == "":
         print("You must provide a password")
         password()
@@ -74,8 +74,8 @@ def account():
         account()
     else:
         hashed_pass = Password.hash_password(get_password)
-        DB.insertData({"email": get_email, "names": get_name, "password": hashed_pass}, "users")
-        if DB.affectedRows() > 0:
+        pycsql.insertData({"email": get_email, "names": get_name, "password": hashed_pass}, "users")
+        if pycsql.affectedRows() > 0:
             print("Account Created Successfully")
             another = input("Would you like to create another account? \n [y/n]")
             if another == "y":
@@ -126,8 +126,8 @@ def login():
     u_pass = user_password()
     u_pass_lower = u_pass.lower()
     end(u_pass_lower)
-    DB.where({"email": u_em})
-    data = DB.getAll("names, password", 'users')
+    pycsql.where({"email": u_em})
+    data = pycsql.getAll("names, password", 'users')
     __hash = __n = ""
     if len(data) != 0:
         for n, p in data:
@@ -160,8 +160,8 @@ def welcome():
 
 def info():
     u_email = input("Enter your email: ")
-    DB.where({"email": u_email})
-    user_data = DB.getAll("names, country, city, contact, dob, img_url", 'users')
+    pycsql.where({"email": u_email})
+    user_data = pycsql.getAll("names, country, city, contact, dob, img_url", 'users')
     if len(user_data) != 0:
 
         for names, country, city, contact, dob, img_url in user_data:

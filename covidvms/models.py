@@ -1,8 +1,8 @@
 from django.db import models
-from controller.ctrl.controller import Password
-from controller.ctrl.database import DB
-from datetime import datetime
 from django.utils import timezone
+
+from pycsql.core.manager import Password
+from pycsql.db.pycsql import pycsql
 
 
 class Auth(models.Model):
@@ -38,8 +38,8 @@ class Auth(models.Model):
             :param email:
             :param row_password:
         """
-        DB.where({column: email})
-        user_data = DB.getAll('first_name, last_name, is_staff, is_superuser, password', 'auth_user')
+        pycsql.where({column: email})
+        user_data = pycsql.getAll('first_name, last_name, is_staff, is_superuser, password', 'auth_user')
         if len(user_data) == 0:
             cls.email_error = "Oops, No account matches the provided login details "
             return

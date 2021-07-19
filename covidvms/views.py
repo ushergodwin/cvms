@@ -1,11 +1,12 @@
-from django.http import HttpResponse
-from django.shortcuts import redirect, render
-from controller.ctrl.controller import File, Math, Password, String
-from covidvms.models import Auth
-from django.http import JsonResponse
 import json
+
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+from pycsql.core.manager import String
+from covidvms.models import Auth
 from covidvms.usermodel import UserModel
 
 

@@ -1,6 +1,6 @@
 from django.db import models
 
-from controller.ctrl.database import pycsql
+from pycsql.db.pycsql import pycsql
 
 from django.core.exceptions import ValidationError
 

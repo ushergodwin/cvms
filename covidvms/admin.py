@@ -227,8 +227,8 @@ class Health:
             "vaccines": Covid19Vaccines.objects.all(),
             "current_date": Date.date(),
             "date": Date.dbdate(24, False),
-            "next": Date.strtotime(21, "days", True),
-            "next_dd": Date.strtotime(21, "days", True, True),
+            "next": Date.strtotime(8, "weeks", True),
+            "next_dd": Date.strtotime(8, "weeks", True, True),
             "centers": Vaccination_centers.objects.all()
         }
         return render(request, 'covidvms/health/register-first-doze.html', context)
@@ -270,6 +270,9 @@ class Health:
             "user_email": current_user,
             "page": "SECOND DOZE",
             "citizens": CitizenModel.get_citizen_for_second_doze()
+
+            # Covid19Vaccination.objects.filter(no_of_dozes=1).select_related('citizen_nin', 'vaccine_type').values()
+                # CitizenModel.get_citizen_for_second_doze()
         }
         return render(request, 'covidvms/health/second-doze.html', context)
 
@@ -286,8 +289,8 @@ class Health:
             "user_email": current_user,
             "page": "SECOND DOZE",
             "citizen": CitizenModel.citizen_for_second_doze(citizen),
-            "next": Date.strtotime(21, "days", True),
-            "next_dd": Date.strtotime(21, "days", True, True),
+            "next": Date.strtotime(8, "weeks", True),
+            "next_dd": Date.strtotime(8, "weeks", True, True),
         }
         return render(request, 'covidvms/health/register-second-doze.html', context)
 

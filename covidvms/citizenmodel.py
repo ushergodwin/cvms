@@ -1,5 +1,6 @@
 from django.db import models
 from django.db.models.fields import IntegerField
+from django.urls import reverse
 
 from controller.ctrl.database import DB
 
@@ -160,8 +161,8 @@ class CitizenModel(models.Model):
     def citizen_for_second_doze(cls, citizen):
 
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
-                  "phone_number, email "
-        columns += ", vaccination_center, name "
+                  "phone_number, email , vaccination_center, name "
+        # columns += ", vaccination_center, name "
 
         sql = "SELECT " + columns + " FROM " + cls.__table + " INNER JOIN " + cls.__vaccination_table
         sql += " ON " + cls.__table + ".nin_number = " + cls.__vaccination_table + ".citizen_nin_id"
@@ -227,6 +228,9 @@ class Covid19Vaccination(models.Model):
 
     def __str__(self) -> str:
         return super().__str__()
+
+    def get_absolute_url(self):
+        return reverse('article-view', args=[str(self.vaccination_id)])
 
     @classmethod
     def register_first_doze(cls, data: dict, nin_id):

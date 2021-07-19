@@ -1,7 +1,8 @@
-{% extends '../base.html' %}
-
-{% block content %}
 {% load static %}
+{% include '../header.html' %}
+{% include '../nav.html' %}
+<main class="container-fluid">
+    <div class="main-body" id="main-body">
         <div class="row mt-5">
             <div class="col-md-12 col-lg-12 col-xl-12">
                 <h4 class="font-weight-bold text-center">REPUBLIC OF UGANDA</h4>
@@ -47,10 +48,14 @@
                 </div>
             </div>
         </div>
+    </div>
+</main>
+
+{% include '../footer.html' %}
 <script>
     $(document).ready(()=> {
         $("#citizens").DataTable();
     })
 </script>
-
-{% endblock %}
+</body>
+</html>

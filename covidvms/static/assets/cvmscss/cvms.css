@@ -1,0 +1,11 @@
+.form-control-custom{
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom-color: #0f6674;
+    width: 100%;
+}
+.form-control-custom:focus{
+    outline: none;
+    border-bottom-color: #6DDCBD;
+}

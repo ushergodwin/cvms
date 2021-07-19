@@ -38,7 +38,7 @@ def name():
 def password():
     user_pass = input("\nEnter Password: ")
     user_pass_lower = user_pass.lower()
-    end(user_pass_lower)
+    end(user_pass_lower)            #password is returned in lower case ,, should be rectified later
     if user_pass == "":
         print("You must provide a password")
         password()
@@ -77,7 +77,7 @@ def account():
         DB.insertData({"email": get_email, "names": get_name, "password": hashed_pass}, "users")
         if DB.affectedRows() > 0:
             print("Account Created Successfully")
-            another = input("Would you like to create an other account? \n [y/n]")
+            another = input("Would you like to create another account? \n [y/n]")
             if another == "y":
                 account()
             if another == "n":

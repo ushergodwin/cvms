@@ -8,6 +8,7 @@ from django.core.validators import validate_email
 from covidvms.usermodel import UserModel
 from pycsql.core.manager import String
 
+
 # Create your views here.
 class Home:
     request = False
@@ -49,7 +50,7 @@ class Home:
         return render(request, 'covidvms/admin/dashboard.html', context)  # --> HttpResponse
 
     @classmethod
-    def navbar(cls, request, doc):
+    def navbar(cls, request):
         context = {
             "details": {}
         }
@@ -72,8 +73,6 @@ class Home:
             password = request.POST.get('password')
 
             column = "email"
-
-            user_key = ""
 
             try:
                 validate_email(email)

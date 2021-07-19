@@ -1,7 +1,12 @@
 from django.db import models
 from django.utils import timezone
+<<<<<<< HEAD
 from pycsql.core.manager import Password
 from pycsql.db.pycsql import pycsql
+=======
+
+
+>>>>>>> main
 class Auth(models.Model):
     user_name = ""
     email_error = ""
@@ -9,10 +14,9 @@ class Auth(models.Model):
     p_hash = ""
     is_staff = 0
     is_superuser = 0
-    
+
     email = models.CharField(max_length=65, primary_key=True)
     is_active = models.IntegerField(null=True, default=1)
-
 
     def __init__(self):
         super().__init__()
@@ -22,9 +26,9 @@ class Auth(models.Model):
 
     def __str__(self) -> str:
         return super().__str__()
-    
+
     @classmethod
-    def authenticate(cls, email: str, row_password: str, column:str = ""):
+    def authenticate(cls, email: str, row_password: str, column: str = ""):
         """
 
         Args:
@@ -32,6 +36,9 @@ class Auth(models.Model):
             password: The user password
         Returns: 
             bool: True if the email exits and the password matches
+            :param column:
+            :param email:
+            :param row_password:
         """
         pycsql.where({column: email})
         user_data = pycsql.getAll('first_name, last_name, is_staff, is_superuser, password', 'auth_user')
@@ -47,6 +54,7 @@ class Auth(models.Model):
             cls.is_authenticated = True
         return cls.is_authenticated
 
+
 class FeedBack(models.Model):
     feedback_id = models.AutoField(primary_key=True)
     email = models.CharField(max_length=65)
@@ -55,7 +63,6 @@ class FeedBack(models.Model):
 
     def create_feedback(self):
         self.save()
-    
+
     def __str__(self) -> str:
         return super().__str__()
-

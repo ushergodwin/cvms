@@ -4,7 +4,11 @@ from django.core.exceptions import ValidationError
 
 from django.core.validators import validate_email
 
+<<<<<<< HEAD
 from pycsql.db.pycsql import pycsql
+=======
+
+>>>>>>> main
 class UserModel(models.Model):
     __user = ""
 
@@ -14,11 +18,12 @@ class UserModel(models.Model):
     image_url = models.CharField(max_length=255)
     account_type = models.IntegerField(default=0)
 
-    def __init__(self):
-        pass
-    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
     def save_user(self):
         self.save()
+
     def __str__(self) -> str:
         return super().__str__()
 
@@ -54,6 +59,6 @@ class UserModel(models.Model):
             for first_name, last_name in user_data:
                 data = {
                     "fname": first_name,
-                    "lname" : last_name
+                    "lname": last_name
                 }
         return data

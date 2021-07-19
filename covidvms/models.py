@@ -1,8 +1,7 @@
+from pycsql.db.pycsql import pycsql
 from django.db import models
 from django.utils import timezone
-
 from pycsql.core.manager import Password
-from pycsql.db.pycsql import pycsql
 
 
 class Auth(models.Model):
@@ -34,9 +33,6 @@ class Auth(models.Model):
             password: The user password
         Returns: 
             bool: True if the email exits and the password matches
-            :param column:
-            :param email:
-            :param row_password:
         """
         pycsql.where({column: email})
         user_data = pycsql.getAll('first_name, last_name, is_staff, is_superuser, password', 'auth_user')

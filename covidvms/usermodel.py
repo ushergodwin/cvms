@@ -1,10 +1,10 @@
 from django.db import models
 
-from controller.ctrl.database import DB
-
 from django.core.exceptions import ValidationError
 
 from django.core.validators import validate_email
+
+from pycsql.db.pycsql import pycsql
 class UserModel(models.Model):
     __user = ""
 
@@ -40,7 +40,7 @@ class UserModel(models.Model):
         Call set_current_user() method first and pass the session email
         :return: dict A dictionary of data for the current user
         """
-        data = dict()
+        data = {}
         column_key = "email"
 
         try:
@@ -48,8 +48,8 @@ class UserModel(models.Model):
         except ValidationError as e:
             column_key = "username"
 
-        DB.where({column_key: cls.__user})
-        user_data = DB.getOneRow('first_name, last_name', 'auth_user')
+        pycsql.where({column_key: cls.__user})
+        user_data = pycsql.getOneRow('first_name, last_name', 'auth_user')
         if len(user_data) != 0:
             for first_name, last_name in user_data:
                 data = {

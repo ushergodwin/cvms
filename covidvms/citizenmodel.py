@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.fields import IntegerField
 
-from controller.ctrl.database import DB
+from pycsql.db.pycsql import pycsql
 
 
 class CitizenModel(models.Model):
@@ -41,35 +41,35 @@ class CitizenModel(models.Model):
         Returns:
             tuple: Available districts in the system
         """
-        return DB.getAll("name", cls.__districts)
+        return pycsql.getAll("name", cls.__districts)
 
     @classmethod
     def add_citizen(cls, citizen_data: dict):
 
-        DB.insertData(citizen_data, cls.__table)
+        pycsql.insertData(citizen_data, cls.__table)
 
-        return DB.affectedRows() > 0
+        return pycsql.affectedRows() > 0
 
     @classmethod
     def create_citizen_account(cls, citizen_data: dict):
 
-        DB.insertData(citizen_data, "auth_user")
+        pycsql.insertData(citizen_data, "auth_user")
 
-        return DB.affectedRows() > 0
+        return pycsql.affectedRows() > 0
 
     @classmethod
     def prepare_citizen_doze(cls, citizen_data: dict):
 
-        DB.insertData(citizen_data, "covidvms_covid19vaccination")
+        pycsql.insertData(citizen_data, "covidvms_covid19vaccination")
 
-        return DB.affectedRows() > 0
+        return pycsql.affectedRows() > 0
 
     @classmethod
     def get_all_citizens(cls):
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
                   "village, parish, sub_county, county, district, phone_number, email "
 
-        return DB.getAll(columns, cls.__table)
+        return pycsql.getAll(columns, cls.__table)
 
     @classmethod
     def citizen_exits(cls, where=None):
@@ -78,9 +78,9 @@ class CitizenModel(models.Model):
         res = False
         try:
 
-            DB.where(where)
+            pycsql.where(where)
 
-            citizen_nin = DB.getOneValue('sur_name', cls.__table)
+            citizen_nin = pycsql.getOneValue('sur_name', cls.__table)
             res = True if citizen_nin != "" and type(citizen_nin) is not bool else res
         except Exception as e:
             res = e
@@ -99,9 +99,9 @@ class CitizenModel(models.Model):
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
                   "village, parish, sub_county, county, district, phone_number, email "
 
-        DB.where(where)
+        pycsql.where(where)
 
-        return DB.join(columns, join_tables)
+        return pycsql.join(columns, join_tables)
 
     @classmethod
     def get_citizen_for_second_doze(cls):
@@ -116,9 +116,9 @@ class CitizenModel(models.Model):
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
                   "village, parish, sub_county, county, district, phone_number, email "
 
-        DB.where(where)
+        pycsql.where(where)
 
-        return DB.join(columns, join_tables)
+        return pycsql.join(columns, join_tables)
 
     @classmethod
     def citizen_for_first_doze(cls, citizen):
@@ -133,13 +133,13 @@ class CitizenModel(models.Model):
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
                   "phone_number, email "
 
-        DB.where(where)
+        pycsql.where(where)
 
         citizen_data = {}
 
-        data = DB.join(columns, join_tables)
+        data = pycsql.join(columns, join_tables)
 
-        if DB.not_empty(tuple(data)):
+        if pycsql.not_empty(tuple(data)):
             for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email in data:
                 citizen_data = {
                     "nin": nin_number,
@@ -172,9 +172,9 @@ class CitizenModel(models.Model):
 
         citizen_data = {}
 
-        data = DB.query(sql, [1, citizen])
+        data = pycsql.query(sql, [1, citizen])
 
-        if DB.not_empty(data):
+        if pycsql.not_empty(data):
             for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, vaccination_center, name in data:
                 citizen_data = {
                     "nin": nin_number,
@@ -230,19 +230,19 @@ class Covid19Vaccination(models.Model):
 
     @classmethod
     def register_first_doze(cls, data: dict, nin_id):
-        DB.where({'citizen_nin_id': nin_id})
+        pycsql.where({'citizen_nin_id': nin_id})
 
-        DB.update(data, "covidvms_covid19vaccination")
+        pycsql.update(data, "covidvms_covid19vaccination")
 
-        return DB.affectedRows() > 0
+        return pycsql.affectedRows() > 0
 
     @classmethod
     def register_second_doze(cls, data: dict, nin_id):
-        DB.where({'citizen_nin_id': nin_id})
+        pycsql.where({'citizen_nin_id': nin_id})
 
-        DB.update(data, "covidvms_covid19vaccination")
+        pycsql.update(data, "covidvms_covid19vaccination")
 
-        return DB.affectedRows() > 0
+        return pycsql.affectedRows() > 0
 
 
 class Ug(models.Model):

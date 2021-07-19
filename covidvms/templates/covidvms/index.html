@@ -6,8 +6,9 @@
 
 <style type="text/css">
     body{
-    background-image: url("{% static 'assets/images/file-20200324-155695-1kaxgif.jpg' %}");
-    background-repeat: repeat-x;
+    background-image: url("{% static 'assets/images/Covid-19 (1).jpg' %}");
+    background-repeat: no-repeat;
+    width: 100%;
 }
 </style>
 <main class="container">
@@ -17,24 +18,26 @@
 <div class="card card-body shadow">
     <br/>
     <div class="row">
-        <div class="col-md-12 col-lg-6 col-xl-6">
+        <div class="col-md-12 col-lg-8 col-xl-8">
             <h4 class="font-weight-bold">LOGIN</h4>
             <br/>
             <form action="{% url 'covidvms:login' %}" method="post" id="loginForm">
                 {% csrf_token %}
-                <div class="form-group">
-                    <label for="email" class="sr-only">Email</label>
-                    <input type="text" name="email" class="form-control-custom" placeholder="user email address or full name" autocomplete="off" required/>
-                </div>
-                <div class="form-group">
-                    <label for="password" class="sr-only">Password</label>
-                    <div class="input-group">
-                        <i class="fas fa-lock text-primary"></i> &nbsp;&nbsp;
-                        <a href="javascript:void(0)" class="text-primary" id="show-password"><i class="fas fa-eye text-primary"></i></a>
-                        <a href="javascript:void(0)" class="text-primary d-none" id="hide-password"><i class="fas fa-eye-slash text-primary"></i></a>
+                <div class="input-group mb-3">
+                    <input type="text" name="email" class="form-control" placeholder="user email address or full name" autocomplete="off" required/>
+                    <div class="input-group-append">
+                      <span class="input-group-text">@cvms.org</span>
                     </div>
-                    <input type="password" name="password" id="password" placeholder="password" class="form-control-custom" autocomplete="off" required/>
-                </div>
+                  </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                      <span class="input-group-text"><i class="fas fa-lock text-primary"></i>  &nbsp;&nbsp;
+                        <a href="javascript:void(0)" class="text-primary" id="show-password"><i class="fas fa-eye-slash text-primary"></i></a>
+                        <a href="javascript:void(0)" class="text-primary d-none" id="hide-password"><i class="fas fa-eye text-primary"></i></a>
+                    </span>
+                    </div>
+                    <input type="password" name="password" id="password" placeholder="password" class="form-control" autocomplete="off" required/>
+                  </div>
                 <div class="form-group">
                     <label for="login" class="sr-only">Login</label>
                     <input type="hidden" name="login" value="1"/>
@@ -43,15 +46,14 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-12 col-lg-6 col-xl-6">
+        <div class="col-md-12 col-lg-4 col-xl-4">
             <div class="card card-body border-0">
                 <div class="row justify-content-center">
-                        <img src="{% static 'assets/images/republic-of-uganda.jpg' %}" class="rounded" width="50%" height="150"/>
+                        <img src="{% static 'assets/images/republic-of-uganda.jpg' %}" class="rounded" width="50%" height="100"/>
                 </div> <br/>
                 <div class="row justify-content-center">
                     <h1 class="font-weight-bold text-success">CVMS <i class="fas fa-check-circle"></i> </h1>
                 </div>
-                <div class="row justify-content-center"><a href="" class="text small"> Create a new account!</a></div>
             </div>
         </div>
     </div>

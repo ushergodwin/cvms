@@ -5,11 +5,10 @@ from django.contrib import admin
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
-
-from controller.ctrl.controller import Math, Notify, String, Date, Password
 from covidvms.citizenmodel import CitizenModel, Covid19Vaccines, Ug, Vaccination_centers, Covid19Vaccination
 from covidvms.usermodel import UserModel
 from io import StringIO
+from pycsql.core.manager import  Math, Notify, String, Date, Password
 
 plt.switch_backend('agg')
 

@@ -1,9 +1,7 @@
 from django.conf import settings
 
-from controller.ctrl.controller import Password
-from controller.ctrl.controller import String
-from controller.ctrl.database import DB
-
+from pycsql.core.manager import Password, String
+from pycsql.db.pycsql import pycsql
 settings.configure()
 
 
@@ -17,44 +15,44 @@ def email():
     _user_email = input("Enter your email: ")
     _user_email_lower = _user_email.lower()
     end(_user_email_lower)
-    if _user_email == "":
-        print("You must enter your email first")
-        email()
-    else:
+    if _user_email != "":
         return _user_email
+
+    print("You must enter your email first")
+    email()
 
 
 def name():
     user_name = input("\nEnter your full name: ")
     user_name_lower = user_name.lower()
     end(user_name_lower)
-    if user_name == "":
-        print("You must provide your full name")
-        name()
-    else:
+    if user_name != "":
         return user_name
+
+    print("You must provide your full name")
+    name()
 
 
 def password():
     user_pass = input("\nEnter Password: ")
     user_pass_lower = user_pass.lower()
     end(user_pass_lower)
-    if user_pass == "":
-        print("You must provide a password")
-        password()
-    else:
+    if user_pass != "":
         return user_pass
+
+    print("You must provide a password")
+    password()
 
 
 def conf_password():
     conf_pass = input("\nRetype your password: ")
     conf_pass_lower = conf_pass.lower()
     end(conf_pass_lower)
-    if conf_pass == "":
-        print("You must confirm your password")
-        conf_password()
-    else:
+    if conf_pass != "":
         return conf_pass
+
+    print("You must confirm your password")
+    conf_password()
 
 
 def account():
@@ -74,8 +72,8 @@ def account():
         account()
     else:
         hashed_pass = Password.hash_password(get_password)
-        DB.insertData({"email": get_email, "names": get_name, "password": hashed_pass}, "users")
-        if DB.affectedRows() > 0:
+        pycsql.insertData({"email": get_email, "names": get_name, "password": hashed_pass}, "users")
+        if pycsql.affectedRows() > 0:
             print("Account Created Successfully")
             another = input("Would you like to create an other account? \n [y/n]")
             if another == "y":
@@ -87,35 +85,36 @@ def account():
                 else:
                     run()
             else:
-                print("Unknown choice")
-                print("exiting...")
-                end("exit")
+                _extracted_from_account_31()
         else:
-            print("Unknown choice")
-            print("exiting...")
-            end("exit")
+            _extracted_from_account_31()
+
+def _extracted_from_account_31():
+    print("Unknown choice")
+    print("exiting...")
+    end("exit")
 
 
 def user_email():
     user_em = input("Enter your email: ")
     u_em_lower = user_em.lower()
     end(u_em_lower)
-    if user_em == "":
-        print("Invalid email address")
-        user_email()
-    else:
+    if user_em != "":
         return user_em
+
+    print("Invalid email address")
+    user_email()
 
 
 def user_password():
     user_pass = input("Enter your password: ")
     u_p_lower = user_pass.lower()
     end(u_p_lower)
-    if user_pass == "":
-        print("Password is required")
-        user_password()
-    else:
+    if user_pass != "":
         return user_pass
+
+    print("Password is required")
+    user_password()
 
 
 def login():
@@ -126,8 +125,8 @@ def login():
     u_pass = user_password()
     u_pass_lower = u_pass.lower()
     end(u_pass_lower)
-    DB.where({"email": u_em})
-    data = DB.getAll("names, password", 'users')
+    pycsql.where({"email": u_em})
+    data = pycsql.getAll("names, password", 'users')
     __hash = __n = ""
     if len(data) != 0:
         for n, p in data:
@@ -151,17 +150,17 @@ def welcome():
     req = input("\nWhat would you like to do? ")
     import re
     reg = r"[a-zA-Z]"
-    if not re.match(reg, req):
-        print(req + " is not recognised as a command")
-        welcome()
-    else:
+    if re.match(reg, req):
         return req
+
+    print(req + " is not recognised as a command")
+    welcome()
 
 
 def info():
     u_email = input("Enter your email: ")
-    DB.where({"email": u_email})
-    user_data = DB.getAll("names, country, city, contact, dob, img_url", 'users')
+    pycsql.where({"email": u_email})
+    user_data = pycsql.getAll("names, country, city, contact, dob, img_url", 'users')
     if len(user_data) != 0:
 
         for names, country, city, contact, dob, img_url in user_data:

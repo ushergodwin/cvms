@@ -1,4 +1,4 @@
-{% extends '../base.html'%}
+{% extends 'covidvms/base.html'%}
 
 {% block content %}
 
@@ -15,6 +15,9 @@
                     <canvas id="vaccination-chart" data-url="{% url 'covidvms:vaccination_chart' %}"></canvas>
                   </div>
             </div>
+
+
+
         </div>
 <script>
     $(document).ready(()=>{
@@ -74,6 +77,8 @@
         }
       });
     });
+
+
 </script>
 
 {% endblock %}

@@ -194,6 +194,26 @@ class CitizenModel(models.Model):
         return citizen_data
 
 
+class Ug(models.Model):
+    dist_id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=100)
+
+    # vaccination_district_location = models.ForeignKey(Covid19Vaccination, on_delete=models.SET_NULL, related_name="+", null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'covidvms_ug'
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+
+    def save_ug(self):
+        self.save()
+
+    def __str__(self) -> str:
+        return super().__str__()
+
+
 class Covid19Vaccines(models.Model):
     vaccine_id = models.CharField(primary_key=True, max_length=8)
     name = models.CharField(max_length=100)
@@ -210,6 +230,9 @@ class Covid19Vaccines(models.Model):
 
 
 class Covid19Vaccination(models.Model):
+    __districts = "covidvms_ug"
+    __vaccination_table = "covidvms_covid19vaccination"
+
     vaccination_id = models.CharField(max_length=11, primary_key=True)
     citizen_nin = models.ForeignKey(CitizenModel, on_delete=models.SET_NULL, related_name="+", null=True)
     no_of_dozes = models.IntegerField(default=0)
@@ -218,6 +241,12 @@ class Covid19Vaccination(models.Model):
     next_doze_on = models.DateTimeField(null=True)
     doze_status = models.CharField(max_length=20, default="PARTIAL")
     vaccination_center = models.CharField(max_length=50, default="Mulago")
+    vaccination_district = models.ForeignKey(Ug, on_delete=models.SET_NULL, related_name="district_id", null=True,
+                                             default=50)
+
+    class Meta:
+        managed = True
+        db_table = 'covidvms_covid19vaccination'
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -244,16 +273,20 @@ class Covid19Vaccination(models.Model):
 
         return pycsql.affectedRows() > 0
 
+    @classmethod
+    def district_partial_graph(cls):
+        where = {'no_of_dozes': 1}
 
-class Ug(models.Model):
-    dist_id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=100)
+        join_tables = {
+            cls.__districts: "dist_id",
+            cls.__vaccination_table: "vaccination_district_id"
+        }
 
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
+        columns = "vaccination_id, no_of_dozes, doze_status, citizen_nin_id, vaccination_center, " \
+                  "vaccination_district_id, dist_id, name "
+        pycsql.where(where)
 
-    def __str__(self) -> str:
-        return super().__str__()
+        return pycsql.join(columns, join_tables)
 
 
 class Vaccination_centers(models.Model):
@@ -268,3 +301,11 @@ class Vaccination_centers(models.Model):
 
     class Meta:
         ordering = ('center_name',)
+
+
+# class create_staff_user(models.Model):
+#     is_staff = 0
+#
+#
+#     username = models.CharField(max_length=100, primary_key= True)
+#     password = models.IntegerField ()

@@ -1,4 +1,5 @@
-{% extends './admin-base.html' %}
+{#{% extends 'covidvms/base.html' %}#}
+{% extends 'covidvms/admin/admin-base.html' %}
 
 {% block content %}
 
@@ -48,15 +49,15 @@
             </div>
             <div class="col-lg-6">
             <div class="card card-success  card-outline">
-              <div class="card-header"> <h5 class="card-title">Card title</h5></div>
+                <div class="card-header"> <h3 class="card-title"><strong style="color: #003366"> Create New Staff User</strong></h3></div>
               <div class="card-body">
 
                 <p class="card-text">
                   Some quick example text to build on the card title and make up the bulk of the card's
                   content.
                 </p>
-                <a href="#" class="card-link">Card link</a>
-                <a href="#" class="card-link">Another link</a>
+                  <p><a href="{% url 'covidvms:staff_user' %}" class="card-link btn  btn-primary">Create Account</a></p>
+{#                <a href="#" class="card-link">Another link</a>#}
               </div>
             </div><!-- /.card -->
           </div>
@@ -71,8 +72,8 @@
               <div class="card-body">
                <h5 class="card-title"> <strong>Detailed representation:</strong></h5>
 
-                <p class="card-text">With supporting from hospital analysis and input of data from various vaccination centers.</p>
-                <p style="color: white"><a href="#" class="btn  btn-primary btn-sm">Bar Graph Overview</a></p>
+                <p class="card-text">With support from hospital analysis and input of data from various districts with vaccination centers.</p>
+                <p style="color: white"><a href="{% url 'covidvms:show_bar' %}" class="btn  btn-primary btn-sm">Bar Graph Overview</a></p>
               </div>
             </div>
             </div>
@@ -87,8 +88,14 @@
                   <p class="card-text">The system is designed to store citizens records </p>
                   <a href="#" class="btn btn-primary btn-sm">Citizens record</a>
                 </div>
+
+
+
+
               </div>
           </div>
+
+
           <!-- /.col-md-6 -->
         </div>
         <!-- /.row -->
@@ -98,6 +105,12 @@
   </div>
   <!-- /.content-wrapper -->
 <script>
+
+
+
+
+
+
   $(document).ready(()=> {
     let vs = 0;
     let vw = 0;

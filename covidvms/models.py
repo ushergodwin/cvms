@@ -13,7 +13,9 @@ class Auth(models.Model):
     is_superuser = 0
 
     email = models.CharField(max_length=65, primary_key=True)
+    username = models.CharField(max_length=100, null=True)
     is_active = models.IntegerField(null=True, default=1)
+    password = models.CharField(max_length=100, null=True)
 
     def __init__(self):
         super().__init__()
@@ -33,6 +35,9 @@ class Auth(models.Model):
             password: The user password
         Returns: 
             bool: True if the email exits and the password matches
+            :param email:
+            :param column:
+            :param row_password:
         """
         pycsql.where({column: email})
         user_data = pycsql.getAll('first_name, last_name, is_staff, is_superuser, password', 'auth_user')

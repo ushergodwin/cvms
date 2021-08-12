@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: PycSQL
+Version: 1.0
+Summary: A lightweight mysql package that works with either pymysql, mysqlclient or mysql connector
+Home-page: https://github.com/ushergodwin/pysql
+Author: Tumuhimbise Usher Godwin
+Author-email: godwintumuhimbise96@gmail.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/ushergodwin/pysql/issues
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# pysql
+MYSQL Database package to run database transactions. Can work with both mysqlclient, pymysql and msqlconnector
+# Required Packages
+- Any Mysql Client package
+- decouple
+# Optional Package
+- Django
+# Configuration
+- Use the .enve.example template for your database configurations
+
+

@@ -1,0 +1,8 @@
+import sys
+def main():
+    args = sys.argv[1:]
+    if len(args) == 1 and args[0] == '--version':
+        print('pysqli v1.2')
+
+if __name__ == '__main__':
+    main()

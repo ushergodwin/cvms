@@ -161,7 +161,7 @@ class CitizenModel(models.Model):
 
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
                   "phone_number, email "
-        columns += ", vaccination_center, name "
+        columns += ", taken_at, vaccination_center, name "
 
         sql = "SELECT " + columns + " FROM " + cls.__table + " INNER JOIN " + cls.__vaccination_table
         sql += " ON " + cls.__table + ".nin_number = " + cls.__vaccination_table + ".citizen_nin_id"
@@ -175,7 +175,7 @@ class CitizenModel(models.Model):
         data = pycsql.query(sql, [1, citizen])
 
         if pycsql.not_empty(data):
-            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, vaccination_center, name in data:
+            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, taken_at, vaccination_center, name in data:
                 citizen_data = {
                     "nin": nin_number,
                     "sur_name": sur_name,
@@ -188,7 +188,8 @@ class CitizenModel(models.Model):
                     "phone": phone_number,
                     "email": email,
                     "vaccination_center": vaccination_center,
-                    "vaccine_name": name
+                    "vaccine_name": name,
+                    "taken_at": taken_at
                 }
 
         return citizen_data
@@ -197,8 +198,6 @@ class CitizenModel(models.Model):
 class Ug(models.Model):
     dist_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
-
-    # vaccination_district_location = models.ForeignKey(Covid19Vaccination, on_delete=models.SET_NULL, related_name="+", null=True)
 
     class Meta:
         managed = True
@@ -302,10 +301,3 @@ class Vaccination_centers(models.Model):
     class Meta:
         ordering = ('center_name',)
 
-
-# class create_staff_user(models.Model):
-#     is_staff = 0
-#
-#
-#     username = models.CharField(max_length=100, primary_key= True)
-#     password = models.IntegerField ()

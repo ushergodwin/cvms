@@ -6,7 +6,8 @@ bin-release/
 
 # Other files and folders
 .settings/
-.pyvenv.cfg
+./pyvenv.cfg
+Lib/site-packages/*
 
 # Executables
 *.swf

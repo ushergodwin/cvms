@@ -28,12 +28,15 @@ class Home:
     def __int__(self):
         self.request = True
 
+
     @classmethod
     def index(cls, request):
         context = {
-            "title": 'Covid Vaccination Management System'
+            "title": 'CVMS'
         }
         return render(request, 'covidvms/index.html', context)
+
+
 
     @classmethod
     def logout(cls, request, logout):
@@ -44,9 +47,10 @@ class Home:
             pass
         return redirect('/')
 
+
+
     @classmethod
-    def Admin_user(cls, request):  # -> HttpResponse:
-        # def Adminuser(cls,request:'covidvms/admin/admin-dashboard')->HttpResponse:
+    def Admin_user(cls, request):
         if 'current' not in request.session.keys():
             return redirect('/')
 
@@ -54,13 +58,37 @@ class Home:
         UserModel.set_current_user(current_user)
 
         context = {
-            "title": 'Admin | Panel',
+            "title": 'CVMS Admin | Panel',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
             "page": "ALL CITIZEN",
+            "no_of_districts": len(Ug.objects.all())
         }
-        return render(request, 'covidvms/admin/dashboard.html', context)  # --> HttpResponse
+        return render(request, 'covidvms/admin/dashboard.html', context)
 
+    
+    
+    @classmethod
+    def show_vaccination_graphs(cls, request, stage):
+        if 'current' not in request.session.keys():
+            return redirect('/')
+
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+
+        context = {
+            "title": 'CVMS Admin | Panel',
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "page": "ALL CITIZEN",
+            "no_of_districts": len(Ug.objects.all())
+        }
+        if stage == 'fully':
+           return render(request, 'covidvms/admin/fully-vaccinated-graph.html', context) 
+        return render(request, 'covidvms/admin/first-doze-graph.html', context)
+    
+    
+    
     @classmethod
     def show_bar(cls, request):
         if 'current' not in request.session.keys():
@@ -82,6 +110,8 @@ class Home:
         }
 
         return render(request, 'covidvms/admin/bar-graph.html', context)
+
+
 
     @classmethod
     def partial_graph(cls, request):
@@ -106,12 +136,7 @@ class Home:
             'data': data,
         })
 
-    @classmethod
-    def navbar(cls, request, doc):
-        context = {
-            "details": {}
-        }
-        return render(request, 'covidvms/', context)
+
 
     @classmethod
     def test_get(cls, request):
@@ -121,6 +146,8 @@ class Home:
             gid = request.GET.get('id')
             age = request.GET.get('age')
             return HttpResponse("You sent id: " + gid + " and age: " + age)
+
+
 
     @classmethod
     def staff_user(cls, request):
@@ -154,6 +181,8 @@ class Home:
 
         return render(request, 'covidvms/admin/staff.html', {'form': form})
 
+
+
     @classmethod
     def login(cls, request):
         redirect_url = "citizen/dashboard"
@@ -182,6 +211,8 @@ class Home:
                 return HttpResponse(json.dumps({"status": "Authenticated", "redirect": redirect_url}))
             else:
                 return HttpResponse(json.dumps({"status": "Invalid email or password"}))
+
+
 
     @classmethod
     def return_graph1(cls):

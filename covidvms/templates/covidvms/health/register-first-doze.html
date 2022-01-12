@@ -62,7 +62,7 @@
                             <div class="card card-body shadow">
                                 <h4>GIVE <span class="text-success">{{citizen.sur_name}} {{citizen.given_name}}</span> {% if citizen.sex == 'M' %} his {% else %} her {% endif%} first doze </h4>
                                 <br/>
-                                <form action="{% url 'covidvms:save-first-doze'%}" method="POST" id="firstDozeForm">
+                                <form action="{% url 'covidvms:save_first_doze'%}" method="POST" id="firstDozeForm">
                                     <div class="form-group">
                                         <label for="vaccine_name">Vaccine Name</label>
                                         <select class="custom-select" name="vaccine" id="vaccine">
@@ -85,7 +85,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="center">Vaccination Center</label>
+                                        <label for="center">Vaccination Center </label>
                                         <input type="text" id="centers" placeholder="-- select center, or type center name --" class="form-control" list="center_list" name="center" required/>
                                         <datalist id="center_list">
                                             {% for center in centers %}
@@ -101,9 +101,10 @@
                                         <div class="row justify-content-between">
                                             {% csrf_token %}
                                             <input type="hidden" name="citizen_nin_id" value="{{citizen.nin}}"/>
+                                            <input type="hidden" name="dist_id" value="{{ citizen.district_id}}"/>
                                             <input type="hidden" name="register_first_doze" value="1"/>
                                             <button type="submit" class="btn btn-success" id="first-doze-btn">Give First Doze <i class="fas fa-check-circle"></i></button>
-                                            <a href="{% url 'covidvms:view-first-doze'%}" class="btn btn-warning">Cancel</a>
+                                            <a href="{% url 'covidvms:view_first_doze'%}" class="btn btn-warning">Cancel</a>
                                         </div>
                                     </div>
                                     <div class="first-doze-response"></div>

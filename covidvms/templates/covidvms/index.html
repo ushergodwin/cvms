@@ -1,25 +1,43 @@
 {% extends 'covidvms/base-index.html' %}
-
+{% load static %}
 {% block content %}
 
-{% load static %}
 
-<style type="text/css">
-    body{
-    background-image: url("{% static 'assets/images/file-20200324-155695-1kaxgif.jpg' %}");
-    /*background-repeat: repeat-x;*/
-}
-</style>
+<script>
+    jQuery(()=> {
+        $("#v-card-btn").on('click', ()=> {
+            let nin = $("#nin_number").val();
+            if(nin.length < 10 )
+            {
+                alert("Invalid Identification Number"); return;
+            }
+            let url = "health/citizen/vaccination/card/"+ nin;
+            window.open(url, '_blank', 'popup');
+        });
+    });
+</script>
 <main class="container">
 <br/>
 <div class="row justify-content-center mt-5">
-<div class="col-md-12 col-lg-8 col-xl-8">
+<div class="col-md-12 col-lg-12 col-xl-12">
 <div class="card card-body shadow">
-    <br/>
-    <div class="row">
-        <div class="col-md-12 col-lg-6 col-xl-6">
+    <img src="{% static 'assets/images/logo-MOH.png' %}" class="card-img-top"/>
+    <div class="row mt-3">
+        <div class="col-lg-4 text-center">
+            <h4><b>VACCINATION CARD?</b></h4>
+            <label for="nin_number" class="w-100">
+                Enter your <span class="text-success">NIN Number</span> or 
+                <span class="text-info">Other ID</span>
+                <input type="text" class="form-control" id="nin_number"/>
+            </label>
+            <button type="button" class="btn btn-success" id="v-card-btn">Get My Vaccination Card</button>
+            <h4 class="mt-3"><b>FeedBack on Vaccination?</b></h4>
+            <a href="" class="btn btn-info">Give FeedBack</a>
+            <h4 class="mt-3"><b>SELF REGISTRATION?</b></h4>
+            <a href="" class="btn btn-info">REGISTER ME</a>
+        </div>
+        <div class="col-md-12 col-lg-4 col-xl-4">
             <h4 class="font-weight-bold">LOGIN</h4>
-            <br/>
             <form action="{% url 'covidvms:login' %}" method="post" id="loginForm">
                 {% csrf_token %}
                 <div class="form-group">
@@ -42,21 +60,19 @@
                     <div class="text-truncate"><a href="" class="text small"> Forgot password!</a></div>
                 </div>
             </form>
+            <div class="response"></div>
         </div>
-        <div class="col-md-12 col-lg-6 col-xl-6">
+        <div class="col-md-12 col-lg-4 col-xl-4">
             <div class="card card-body border-0">
                 <div class="row justify-content-center">
-                        <img src="{% static 'assets/images/republic-of-uganda.jpg' %}" class="rounded" width="50%" height="150"/>
-                </div> <br/>
+                    <img src="{% static 'assets/images/Covid-19 (1).jpg' %}" class="rounded-circle" width="60%" height="200"/>
+                </div>
                 <div class="row justify-content-center">
                     <h1 class="font-weight-bold text-success">CVMS <i class="fas fa-check-circle"></i> </h1>
                 </div>
-                <div class="row justify-content-center"><a href="" class="text small"> Create a new account!</a></div>
             </div>
         </div>
     </div>
-    <div class="response"></div>
-    <br/>
 </div>
 </div>
 </div>

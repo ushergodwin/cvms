@@ -6,7 +6,7 @@
             <div class="col-md-12 col-lg-12 col-xl-12">
                 <h4 class="font-weight-bold text-center">REPUBLIC OF UGANDA</h4>
                 <div class="table-responsive">
-                    <table class="table table-light table-striped" id="citizens">
+                    <table class="table table-light table-striped dataTable" id="citizens">
                         <thead>
                             <th>NIN</th>
                             <th>SURNAME</th>
@@ -27,7 +27,7 @@
                                     <td>{{ citizen.4 }}</td>
                                     <td>{{ citizen.5 }}</td>
                                     <td>
-                                        <a href="{% url 'covidvms:register-first-doze' citizen.0 %}" class="btn btn-success btn-sm" data-toggle="tooltip" title="register for first doze">
+                                        <a href="{% url 'covidvms:register_first_doze' citizen.0 %}" class="btn btn-success btn-sm" data-toggle="tooltip" title="register for first doze">
                                             <i class="fas fa-registered"></i>
                                         </a>
                                     </td>

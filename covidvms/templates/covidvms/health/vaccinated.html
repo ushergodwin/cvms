@@ -1,0 +1,52 @@
+{% extends '../base.html' %}
+
+{% block content %}
+{% load static %}
+<script>
+    $(document).ready(()=> {
+        $(".v-card").on('click', function(){
+            window.open($(this).data('url'), '_blank', 'popup');
+        });
+    })
+</script>
+        <div class="row mt-5">
+            <div class="col-md-12 col-lg-12 col-xl-12">
+                <h4 class="font-weight-bold text-center">REPUBLIC OF UGANDA</h4>
+                <div class="table-responsive">
+                    <table class="table table-light table-striped dataTable" id="citizens">
+                        <thead>
+                            <th>NIN</th>
+                            <th>SURNAME</th>
+                            <th>GIVEN NAME</th>
+                            <th>NATIONALITY</th>
+                            <th>SEX</th>
+                            <th>DATE OF BIRTH</th>
+                            <th>ACTION</th>
+                        </thead>
+
+                        <tbody>
+                            {% for citizen in citizens %}
+                                <tr>
+                                    <td>{{ citizen.0 }}</td>
+                                    <td>{{ citizen.1 }}</td>
+                                    <td>{{ citizen.2 }}</td>
+                                    <td>{{ citizen.3 }}</td>
+                                    <td>{{ citizen.4 }}</td>
+                                    <td>{{ citizen.5 }}</td>
+                                    <td>
+                                        <a href="javascript:;" class="btn btn-success btn-sm v-card" data-toggle="tooltip" title="view Clearence"
+                                         data-url="{% url 'covidvms:vaccination_clearence_card' citizen.0 %}">
+                                            Vaccination Card
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+</body>
+</html>

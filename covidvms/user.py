@@ -17,44 +17,40 @@ def email():
     _user_email = input("Enter your email: ")
     _user_email_lower = _user_email.lower()
     end(_user_email_lower)
-    if _user_email == "":
-        print("You must enter your email first")
-        email()
-    else:
+    if _user_email != "":
         return _user_email
+    print("You must enter your email first")
+    email()
 
 
 def name():
     user_name = input("\nEnter your full name: ")
     user_name_lower = user_name.lower()
     end(user_name_lower)
-    if user_name == "":
-        print("You must provide your full name")
-        name()
-    else:
+    if user_name != "":
         return user_name
+    print("You must provide your full name")
+    name()
 
 
 def password():
     user_pass = input("\nEnter Password: ")
     user_pass_lower = user_pass.lower()
     end(user_pass_lower)
-    if user_pass == "":
-        print("You must provide a password")
-        password()
-    else:
+    if user_pass != "":
         return user_pass
+    print("You must provide a password")
+    password()
 
 
 def conf_password():
     conf_pass = input("\nRetype your password: ")
     conf_pass_lower = conf_pass.lower()
     end(conf_pass_lower)
-    if conf_pass == "":
-        print("You must confirm your password")
-        conf_password()
-    else:
+    if conf_pass != "":
         return conf_pass
+    print("You must confirm your password")
+    conf_password()
 
 
 def account():
@@ -100,22 +96,20 @@ def user_email():
     user_em = input("Enter your email: ")
     u_em_lower = user_em.lower()
     end(u_em_lower)
-    if user_em == "":
-        print("Invalid email address")
-        user_email()
-    else:
+    if user_em != "":
         return user_em
+    print("Invalid email address")
+    user_email()
 
 
 def user_password():
     user_pass = input("Enter your password: ")
     u_p_lower = user_pass.lower()
     end(u_p_lower)
-    if user_pass == "":
-        print("Password is required")
-        user_password()
-    else:
+    if user_pass != "":
         return user_pass
+    print("Password is required")
+    user_password()
 
 
 def login():
@@ -151,11 +145,10 @@ def welcome():
     req = input("\nWhat would you like to do? ")
     import re
     reg = r"[a-zA-Z]"
-    if not re.match(reg, req):
-        print(req + " is not recognised as a command")
-        welcome()
-    else:
+    if re.match(reg, req):
         return req
+    print(req + " is not recognised as a command")
+    welcome()
 
 
 def info():
@@ -181,7 +174,7 @@ def run():
     terminator = request.lower()
     end(terminator)
     if request == "account":
-        login()
+        account()
     elif request == "bio":
         info()
     else:

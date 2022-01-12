@@ -20,11 +20,17 @@ class Auth(models.Model):
     def __init__(self):
         super().__init__()
 
+
+
     def save_auth(self):
         self.save()
 
-    def __str__(self) -> str:
+
+
+    def __str__(self):
         return super().__str__()
+
+
 
     @classmethod
     def authenticate(cls, email: str, row_password: str, column: str = ""):
@@ -63,5 +69,24 @@ class FeedBack(models.Model):
     def create_feedback(self):
         self.save()
 
-    def __str__(self) -> str:
+
+
+    def __str__(self):
         return super().__str__()
+
+class VaccinationCards(models.Model):
+    card_id = models.AutoField(primary_key=True)
+    card_epi = models.CharField(max_length=11)
+    card_sn = models.CharField(max_length=8)
+    batch_no = models.CharField(max_length=8)
+    citizen_nin_id = models.CharField(max_length=15, default='')
+    
+    
+    def save(self):
+        self.save()
+        
+        
+        
+    def __str__(self):
+        return super().__str__()
+    

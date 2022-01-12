@@ -11,6 +11,7 @@ from pycsql.core.manager import Notify
 from pycsql.core.manager import String
 from pycsql.core.manager import Date
 from pycsql.core.manager import Password
+from pycsql.db.pycsql import pycsql
 from covidvms.citizenmodel import CitizenModel, Covid19Vaccines, Ug, Vaccination_centers, Covid19Vaccination
 from covidvms.usermodel import UserModel
 from io import StringIO
@@ -20,6 +21,7 @@ plt.switch_backend('agg')
 
 # Register your models here.
 class Health:
+
 
     @classmethod
     def index(cls, request):
@@ -32,10 +34,13 @@ class Health:
             "title": 'CVMS | Health Dashboard',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "page": "HOME",
-            "graph1": Health.return_graph()
+            "page": {"active": "HOME", "nav": "HOME"},
+            "no_of_districts": len(Ug.objects.all()),
+            "districts": CitizenModel.get_districts()
         }
         return render(request, 'covidvms/health/dashboard.html', context)
+
+
 
     @classmethod
     def return_graph(cls):
@@ -57,11 +62,49 @@ class Health:
         return imgdata.getvalue()
 
     @classmethod
-    def vaccination_chart(cls, request):
+    def vaccination_chart(cls, request, limit):
         labels = ["Kampala", "Wakiso", "Jinja", "Entebbe", "Masaka", "Kabale", "Mbarara", "Kasese"]
         data = [20000000, 10000000, 15000000, 5000000, 8000000, 9000000, 12000000, 4000000]
         return JsonResponse({'labels': labels, 'data': data})
 
+
+
+    @classmethod
+    def partial_vaccination_chart(cls, request):
+        limit1 = request.GET.get('min')
+        limit2 = request.GET.get('max')
+        query = "SELECT dist_id, name FROM covidvms_ug ORDER BY name ASC LIMIT %s, %s"
+        query_param = [int(limit1), int(limit2)]
+        districts = pycsql.query(query, query_param)
+        data = []
+        sql = "SELECT COUNT(vaccination_id) FROM covidvms_covid19vaccination WHERE no_of_dozes = %s AND vaccination_district_id = %s"
+        for dist_id, name in districts:
+            vaccinated = pycsql.query(sql, [1, dist_id])
+            vaccinated = max(vaccinated[0][0], 0)
+            data.append({'district': String.to_upper(name), 'vaccination': vaccinated})
+
+        return JsonResponse(data, safe=False)
+            
+    
+    
+    @classmethod 
+    def fully_vaccinated_chart(cls, request):
+        limit1 = request.GET.get('min')
+        limit2 = request.GET.get('max')
+        query = "SELECT dist_id, name FROM covidvms_ug ORDER BY name ASC LIMIT %s, %s"
+        query_param = [int(limit1), int(limit2)]
+        districts = pycsql.query(query, query_param)
+        data = []
+        sql = "SELECT COUNT(vaccination_id) FROM covidvms_covid19vaccination WHERE no_of_dozes = %s AND vaccination_district_id = %s"
+        for dist_id, name in districts:
+            vaccinated = pycsql.query(sql, [2, dist_id])
+            vaccinated = max(vaccinated[0][0], 0)
+            data.append({'district': String.to_upper(name), 'vaccination': vaccinated})
+
+        return JsonResponse(data, safe=False)
+        
+        
+        
     @classmethod
     def add_citizen(cls, request):
         if 'current' not in request.session.keys():
@@ -73,10 +116,12 @@ class Health:
             "title": 'CVMS | ADD CITIZEN',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "page": "ADD CITIZEN",
+            "page": {"active": "ADD", "nav": "CITIZEN"},
             "districts": CitizenModel.get_districts()
         }
         return render(request, 'covidvms/health/add-citizen.html', context)
+
+
 
     @classmethod
     def register_citizen(cls, request):
@@ -99,42 +144,19 @@ class Health:
         phone_number = String.trim(request.POST.get('tel'))
         email_address = String.trim(request.POST.get('email'))
 
-        citizenInput = [
-            surname,
-            given_name,
-            nationality,
-            gender,
-            date_of_birth,
-            nin_number,
-            card_no,
-            expiry_date,
-            village,
-            parish,
-            sub_county,
-            county,
-            district,
-            phone_number,
-            email_address
+        citizenInput = [surname,given_name,nationality,gender,date_of_birth,nin_number,
+            card_no,expiry_date,village,parish,sub_county,county,district,phone_number,email_address
         ]
 
         if not String.is_not_empty(citizenInput):
             return HttpResponse(Notify.info("Oops, Some fields are empty"))
         prefix_code = "+256"
-        citizen_data = {
-            "sur_name": String.to_upper(surname),
-            "given_name": String.to_upper(given_name),
-            "nationality": nationality,
-            "gender": gender,
-            "date_of_birth": String.replace("/", "-", date_of_birth),
-            "nin_number": nin_number,
-            "card_no": card_no,
-            "expiry_date": String.replace("/", "-", expiry_date),
-            "village": String.to_upper(village),
-            "parish": String.to_upper(parish),
-            "sub_county": String.to_upper(sub_county),
-            "county": String.to_upper(county),
-            "district": String.to_upper(district),
-            "phone_number": prefix_code + phone_number,
+        citizen_data = {"sur_name": String.to_upper(surname),"given_name": String.to_upper(given_name),
+            "nationality": nationality,"gender": gender,"date_of_birth": String.replace("/", "-", date_of_birth),
+            "nin_number": nin_number,"card_no": card_no,"expiry_date": String.replace("/", "-", expiry_date),
+            "village": String.to_upper(village),"parish": String.to_upper(parish),
+            "sub_county": String.to_upper(sub_county),"county": String.to_upper(county),
+            "district": String.to_upper(district),"phone_number": prefix_code + phone_number,
             "email": email_address
         }
 
@@ -155,14 +177,9 @@ class Health:
         prefix = "0"
 
         citizen_account_info = {
-            "password": Password.hash_password(prefix + phone_number),
-            "is_superuser": 0,
-            "username": String.to_lower(surname + given_name),
-            "first_name": surname,
-            "last_name": given_name,
-            "email": email_address,
-            "is_staff": 0,
-            "is_active": 1,
+            "password": Password.hash_password(prefix + phone_number),"is_superuser": 0,
+            "username": String.to_lower(surname + given_name),"first_name": surname,
+            "last_name": given_name,"email": email_address,"is_staff": 0,"is_active": 1,
             "date_joined": datetime.now()
         }
 
@@ -183,6 +200,8 @@ class Health:
         CitizenModel.create_citizen_account(citizen_account_info)
         return HttpResponse(Notify.success("Citizen added successfully"))
 
+
+
     @classmethod
     def view_citizens(cls, request):
         if 'current' not in request.session.keys():
@@ -191,14 +210,34 @@ class Health:
         UserModel.set_current_user(current_user)
 
         context = {
-            "title": 'CVMS | ADD CITIZEN',
+            "title": 'CVMS | CITIZEN | ADD',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "page": "ALL CITIZEN",
+            "page": {"active": "ALL", "nav": "CITIZENS"},
             "citizens": CitizenModel.get_all_citizens()
         }
         return render(request, 'covidvms/health/view-citizens.html', context)
 
+    
+    
+    @classmethod
+    def view_citizen_by_id(cls, request, citizen): 
+        if 'current' not in request.session.keys():
+            return redirect('/')
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+
+        context = {
+            "title": 'CVMS | CITIZEN VIEW ' + citizen,
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "page": {"active": citizen, "nav": "CITIZEN"},
+            "citizen": CitizenModel.get_citizen_by_id(citizen)
+        }
+        return render(request, 'covidvms/health/view-citizen-details.html', context)
+    
+    
+    
     @classmethod
     def view_first_doze(cls, request):
         if 'current' not in request.session.keys():
@@ -207,13 +246,15 @@ class Health:
         UserModel.set_current_user(current_user)
 
         context = {
-            "title": 'CVMS | FIRST DOZE',
+            "title": 'CVMS | VACCINATION | FIRST DOZE',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "page": "FIST DOZE",
+            "page": {"active": "FIST DOZE", 'nav': "VACCINATION"},
             "citizens": CitizenModel.get_citizen_for_first_doze()
         }
         return render(request, 'covidvms/health/first-doze.html', context)
+
+
 
     @classmethod
     def register_first_doze(cls, request, citizen):
@@ -223,19 +264,21 @@ class Health:
         UserModel.set_current_user(current_user)
 
         context = {
-            "title": 'CVMS | FIRST DOZE',
+            "title": 'CVMS | VACCINATION | FIRST DOZE',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "page": "FIST DOZE",
+            "page": {"active": "FIST DOZE", "nav": "VACCINATION"},
             "citizen": CitizenModel.citizen_for_first_doze(citizen),
             "vaccines": Covid19Vaccines.objects.all(),
             "current_date": Date.date(),
             "date": Date.dbdate(24, False),
-            "next": Date.strtotime(8, "weeks", True),
-            "next_dd": Date.strtotime(8, "weeks", True, True),
+            "next": Date.strtotime(4, "weeks", True),
+            "next_dd": Date.strtotime(4, "weeks", True, True),
             "centers": Vaccination_centers.objects.all()
         }
         return render(request, 'covidvms/health/register-first-doze.html', context)
+
+
 
     @classmethod
     def save_first_doze(cls, request):
@@ -245,21 +288,24 @@ class Health:
 
         doze_data = {
             "no_of_dozes": 1,
-            "taken_at": request.POST.get('taken_date'),
-            "next_doze_on": request.POST.get('next_doze_date'),
+            "taken_at": request.POST.get('taken_date') + " " + String.to_string(datetime.time(datetime.now())),
+            "next_doze_on": request.POST.get('next_doze_date') + " " + String.to_string(datetime.time(datetime.now())),
             "vaccine_type_id": request.POST.get('vaccine'),
-            "vaccination_center": request.POST.get('center')
+            "vaccination_center": request.POST.get('center'),
+            "vaccination_district_id": request.POST.get('dist_id')
         }
 
         citizen_nin_id = request.POST.get('citizen_nin_id')
 
-        if not Covid19Vaccination.register_first_doze(doze_data, citizen_nin_id):
+        if not Covid19Vaccination.vaccinate_citizen(doze_data, citizen_nin_id):
             return HttpResponse(
                 Notify.failure("Something went wrong while processing the request. Please try again later!"))
 
         # notify user for the next doze by email or phone number
 
         return HttpResponse(Notify.success("Citizen registered for the first doze successfully"))
+
+
 
     @classmethod
     def view_second_doze(cls, request):
@@ -269,17 +315,16 @@ class Health:
         UserModel.set_current_user(current_user)
 
         context = {
-            "title": 'CVMS | SECOND DOZE',
+            "title": 'CVMS | VACCINATION | SECOND DOZE',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "page": "SECOND DOZE",
+            "page": {"active": "SECOND DOZE", "nav": "VACCINATION"},
             "citizens": CitizenModel.get_citizen_for_second_doze()
-
-            # Covid19Vaccination.objects.filter(no_of_dozes=1).select_related('citizen_nin', 'vaccine_type').values()
-                # CitizenModel.get_citizen_for_second_doze()
         }
         return render(request, 'covidvms/health/second-doze.html', context)
-
+    
+    
+    
     @classmethod
     def register_second_doze(cls, request, citizen):
         if 'current' not in request.session.keys():
@@ -288,15 +333,17 @@ class Health:
         UserModel.set_current_user(current_user)
 
         context = {
-            "title": 'CVMS | SECOND DOZE',
+            "title": 'CVMS | VACCINATION | SECOND DOZE',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "page": "SECOND DOZE",
+            "page": {"active": "SECOND DOZE", "nav": "VACCINATION"},
             "citizen": CitizenModel.citizen_for_second_doze(citizen),
             "next": Date.strtotime(8, "weeks", True),
             "next_dd": Date.strtotime(8, "weeks", True, True),
         }
         return render(request, 'covidvms/health/register-second-doze.html', context)
+
+
 
     @classmethod
     def save_second_doze(cls, request):
@@ -308,16 +355,77 @@ class Health:
             "no_of_dozes": 2,
             "doze_status": "FULLY"
         }
-
+        
         citizen_nin_id = request.POST.get('citizen_nin_id')
+                
+        card_data = {
+            "card_epi": "HMIS EPI " + String.to_string(Math.random_number(0, 99999)),
+            "card_sn": String.to_string(Math.random_number(0, 99999999)),
+            "batch_no": String.to_string(Math.random_number(0, 99999)) + "BD",
+            "citizen_nin_id": citizen_nin_id
+        }
 
-        if not Covid19Vaccination.register_first_doze(doze_data, citizen_nin_id):
+
+        if not Covid19Vaccination.vaccinate_citizen(doze_data, citizen_nin_id):
             return HttpResponse(
                 Notify.failure("Something went wrong while processing the request. Please try again later!"))
 
         # notify user for the next doze by email or phone number
-
+        if not Covid19Vaccination.create_vaccination_card(card_data):
+              return HttpResponse(
+                Notify.failure("Failed to create a vaccination card!.Please try again later!"))
+ 
         return HttpResponse(Notify.success("Citizen registered for the second doze successfully"))
+    
+    
+    
+    @classmethod
+    def fully_vaccinated(cls, request):
+        if 'current' not in request.session.keys():
+            return redirect('/')
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+
+        context = {
+            "title": 'CVMS | FULLY VACCINATED CITIZENS',
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "page": {"active": "FULLY VACCINATED", "nav": "VACCINATION"},
+            "citizens": CitizenModel.fully_vaccinated_citizen()
+        }
+        return render(request, 'covidvms/health/vaccinated.html', context)
+    
+    
+    
+    @classmethod
+    def vaccination_clearence_card(cls, request, citizen):
+        if 'current' not in request.session.keys():
+            return redirect('/')
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+        citizen_data = CitizenModel.vaccination_card(citizen)
+        context = {
+            "title": 'CVMS | CITIZEN VACCINATION CARD',
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "page": {"active": "CARD", "nav": "VACCINATION"},
+            "citizen": citizen_data,
+            "citizen_len": max(len(citizen_data), 0),
+        }
+
+        return render(request, 'covidvms/health/vaccination_card.html', context)
+    
+    
+    
+    @classmethod
+    def citizen_vaccination_card(cls, request, citizen):
+        citizen_data = CitizenModel.vaccination_card(citizen)
+        context = {
+            "title": 'CVMS | CITIZEN VACCINATION CARD',
+            "citizen": citizen_data,
+            "citizen_len": max(len(citizen_data), 0),
+        }
+        return render(request, 'covidvms/health/vaccination_card.html', context)
 
 
 admin.site.register(Covid19Vaccines)

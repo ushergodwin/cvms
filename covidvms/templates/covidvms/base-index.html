@@ -9,21 +9,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/fontawesome/css/all.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/cvmscss/cvms.css' %}">
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/bootstrap/css/jquery.dataTables.min.css' %}">
     <style type="text/css">
         .no-js #loader { display: none;  }
         .js #loader { display: block; position: absolute; left: 100px; top: 0; }.se-pre-con {position: fixed;left: 0px;top: 0px;width: 100%;height: 100%;z-index: 9999;background: url("{% static 'assets/images/Preloader_2.gif' %}") center no-repeat #fff;}
-        .side-nav {position: fixed;height: 100%;top: 0;left: 0; width: 180px;z-index: 10000 !important;}.side-nav {overflow-y: auto;}.toggle-side-nav {position: fixed;height: 100%;margin-left: 180px;top: 0;z-index: 10000 !important;}
-        .main-body {margin-left: 220px;}@media  screen and (max-width: 660px) {.side-nav {display: none;}.toggle-side-nav {margin-left: 0;width: 20px;}#close-side-nav { display: none;}#open-side-nav{display: block;}
-        .main-body {margin-left: 40px;}}@media screen and (min-width: 660px) {#open-side-nav {display: none;}#close-side-nav {display: block;}}.navbar-nav a {font-size: 20px!important;}body {font-family: 'Roboto';font-size: 18px;}.bg-nvb {background-color: rgb(9, 20, 60)!important;color: #fff!important;}.bg-nvb a{color: #6c757d!important;}.bg-nvb a:hover{color:#cbd3da!important;text-decoration: none;}.bg-nvb ul,ol{list-style-type: none;}.text-nvb {color: rgb(9, 20, 60)!important;}.h-5 {height: 45px !important;}.hr {border: 1px solid #343a40;}.borderless {border: 2px solid #17a2b8;border-top: none;border-left: none;border-right: none;width: 100%;}.borderless:focus { outline: none;border-color: #28a745;}#citizen-list,#vaccination-list,#feedback-list,#settings-list,.second-row{display: none;} .sidebar-content ul li a {font-size: 15px;}
-        .card-striped{background: repeating-linear-gradient(45deg,transparent,transparent 10px, #ccc 10px, #ccc 20px),linear-gradient(to bottom, #eee, #999)} .fw{width: 100% !important;}
+        .form-control-custom{font-size: 18px!important;}
     </style>
     <script src="{% static 'assets/bootstrap/js/jquery-3.5.1.min.js' %}"></script>
-    <script>
-        $(document).ready(()=> {
-            $('[data-toggle="tooltip"]').tooltip();
-        })
-    </script>
 </head>
 <body>
 <div class="se-pre-con"></div>
@@ -40,8 +31,5 @@
 <script src="{% static 'assets/cvmsjs/cvms.js' %}"></script>
 <script src="{% static 'assets/bootstrap/js/popper.min.js' %}"></script>
 <script src="{% static 'assets/bootstrap/js/bootstrap.min.js' %}"></script>
-<script src="{% static 'assets/bootstrap/tables/dataTables.bootstrap4.min.js' %}"></script>
-<script src="{% static 'assets/bootstrap/tables/jquery.dataTables.min.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.3.2/chart.min.js" integrity="sha512-VCHVc5miKoln972iJPvkQrUYYq7XpxXzvqNfiul1H4aZDwGBGC0lq373KNleaB2LpnC2a/iNfE5zoRYmB4TRDQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </body>
 </html>

@@ -62,7 +62,7 @@
                             <div class="card card-body shadow">
                                 <h4>GIVE <span class="text-success">{{citizen.sur_name}} {{citizen.given_name}}</span> {% if citizen.sex == 'M' %} his {% else %} her {% endif%} second doze </h4>
                                 <br/>
-                                <form action="{% url 'covidvms:save-second-doze'%}" method="POST" id="secondDozeForm">
+                                <form action="{% url 'covidvms:save_second_doze'%}" method="POST" id="secondDozeForm">
                                     <div class="form-group">
                                         <label for="vaccine_name">Vaccine Name</label>
                                         <input type="text" name="vaccine_name" class="form-control" value="{{citizen.vaccine_name}}" readonly/>
@@ -83,7 +83,7 @@
                                             <input type="hidden" name="citizen_nin_id" value="{{citizen.nin}}"/>
                                             <input type="hidden" name="register_second_doze" value="1"/>
                                             <button type="submit" class="btn btn-success" id="second-doze-btn">Give Second Dose <i class="fas fa-check-circle"></i></button>
-                                            <a href="{% url 'covidvms:view-second-doze'%}" class="btn btn-warning">Cancel</a>
+                                            <a href="{% url 'covidvms:view_second_doze'%}" class="btn btn-warning">Cancel</a>
                                         </div>
                                     </div>
                                     <div class="second-doze-response"></div>

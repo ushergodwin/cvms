@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.fields import IntegerField
 
 from pycsql.db.pycsql import pycsql
-
+from pycsql.core.manager import Math, String, Date
 
 class CitizenModel(models.Model):
     __table = "covidvms_citizenmodel"
@@ -25,14 +25,16 @@ class CitizenModel(models.Model):
     phone_number = models.CharField(max_length=13)
     email = models.EmailField(max_length=65)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def save_citizen(self):
         self.save()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return super().__str__()
+
+
 
     @classmethod
     def get_districts(cls):
@@ -41,7 +43,10 @@ class CitizenModel(models.Model):
         Returns:
             tuple: Available districts in the system
         """
+        pycsql.orderBy('name')
         return pycsql.getAll("name", cls.__districts)
+
+
 
     @classmethod
     def add_citizen(cls, citizen_data: dict):
@@ -50,12 +55,17 @@ class CitizenModel(models.Model):
 
         return pycsql.affectedRows() > 0
 
+
+
+
     @classmethod
     def create_citizen_account(cls, citizen_data: dict):
 
         pycsql.insertData(citizen_data, "auth_user")
 
         return pycsql.affectedRows() > 0
+
+
 
     @classmethod
     def prepare_citizen_doze(cls, citizen_data: dict):
@@ -64,18 +74,31 @@ class CitizenModel(models.Model):
 
         return pycsql.affectedRows() > 0
 
+
+
     @classmethod
     def get_all_citizens(cls):
-        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
-                  "village, parish, sub_county, county, district, phone_number, email "
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth," \
+                  "district"
 
         return pycsql.getAll(columns, cls.__table)
+    
+    
+    
+    @classmethod
+    def get_citizen_by_id(cls, citizen):
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth," \
+                  "card_no, phone_number, village, parish, county, sub_county, district, email"
+        pycsql.where({"nin_number": citizen})
+        return pycsql.getOneRow(columns, cls.__table)
+
+
 
     @classmethod
     def citizen_exits(cls, where=None):
+        res = False
         if where is None:
             where = {}
-        res = False
         try:
 
             pycsql.where(where)
@@ -85,6 +108,8 @@ class CitizenModel(models.Model):
         except Exception as e:
             res = e
         return res
+
+
 
     @classmethod
     def get_citizen_for_first_doze(cls):
@@ -97,11 +122,13 @@ class CitizenModel(models.Model):
         }
 
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
-                  "village, parish, sub_county, county, district, phone_number, email "
+                  "village, parish, sub_county, county, district, phone_number, email"
 
         pycsql.where(where)
 
         return pycsql.join(columns, join_tables)
+
+
 
     @classmethod
     def get_citizen_for_second_doze(cls):
@@ -120,6 +147,8 @@ class CitizenModel(models.Model):
 
         return pycsql.join(columns, join_tables)
 
+
+
     @classmethod
     def citizen_for_first_doze(cls, citizen):
 
@@ -131,37 +160,45 @@ class CitizenModel(models.Model):
         }
 
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
-                  "phone_number, email "
-
-        pycsql.where(where)
+                  "phone_number, email, district"
 
         citizen_data = {}
+                
+        pycsql.where(where)
 
         data = pycsql.join(columns, join_tables)
 
         if pycsql.not_empty(tuple(data)):
-            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email in data:
+            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, district in data:
                 citizen_data = {
-                    "nin": nin_number,
-                    "sur_name": sur_name,
-                    "given_name": given_name,
-                    "nationality": nationality,
-                    "sex": gender,
-                    "dob": date_of_birth,
-                    "card_no": card_no,
-                    "expiry_date": expiry_date,
-                    "phone": phone_number,
-                    "email": email
+                    "nin": nin_number,"sur_name": sur_name,"given_name": given_name,
+                    "nationality": nationality,"sex": gender,"dob": date_of_birth,
+                    "card_no": card_no,"expiry_date": expiry_date,"phone": phone_number,
+                    "email": email,"district_name": district 
                 }
-
+                
+        pycsql.where({'name': citizen_data.get('district_name')})
+        district = pycsql.getOneValue('dist_id', 'covidvms_ug')
+        
+        if type(district) is not int:
+            dist_id = Math.random_number(0, 999)
+            pycsql.insertData({'dist_id': dist_id, 'name': citizen_data.get('district_name')}, 'covidvms_ug')
+            district = dist_id
+            
+        citizen_data.update(district_id = district)
+        
         return citizen_data
+
+
 
     @classmethod
     def citizen_for_second_doze(cls, citizen):
 
-        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
-                  "phone_number, email "
-        columns += ", taken_at, vaccination_center, name "
+        columns = (
+            "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, "
+            "phone_number, email " + ", taken_at, vaccination_center, name "
+        )
+
 
         sql = "SELECT " + columns + " FROM " + cls.__table + " INNER JOIN " + cls.__vaccination_table
         sql += " ON " + cls.__table + ".nin_number = " + cls.__vaccination_table + ".citizen_nin_id"
@@ -177,21 +214,77 @@ class CitizenModel(models.Model):
         if pycsql.not_empty(data):
             for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, taken_at, vaccination_center, name in data:
                 citizen_data = {
+                    "nin": nin_number,"sur_name": sur_name,"given_name": given_name,
+                    "nationality": nationality,"sex": gender,"dob": date_of_birth,
+                    "card_no": card_no,"expiry_date": expiry_date,"phone": phone_number,
+                    "email": email,"vaccination_center": vaccination_center,
+                    "vaccine_name": name,"taken_at": taken_at
+                }
+
+        return citizen_data
+    
+    
+    
+    @classmethod
+    def fully_vaccinated_citizen(cls): 
+        
+        where = {'no_of_dozes': 2}
+
+        join_tables = {
+            cls.__table: "nin_number",
+            cls.__vaccination_table: "citizen_nin_id"
+        }
+
+        columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, " \
+                  "village, parish, sub_county, county, district, phone_number, email "
+
+        pycsql.where(where)
+
+        return pycsql.join(columns, join_tables)
+    
+    
+    
+    @classmethod 
+    def vaccination_card(cls, citizen):
+        
+        columns = (
+            "nin_number, sur_name, given_name, nationality, gender, date_of_birth, district, sub_county, parish, village, phone_number, taken_at, next_doze_on, vaccination_center, name, card_epi, card_sn, batch_no"
+        )
+
+        sql = "SELECT " + columns + " FROM " + cls.__table + " INNER JOIN " + cls.__vaccination_table
+        sql += " ON " + cls.__table + ".nin_number = " + cls.__vaccination_table + ".citizen_nin_id"
+        sql += " INNER JOIN covidvms_covid19vaccines  ON " + cls.__vaccination_table + ".vaccine_type_id"
+        sql += " = covidvms_covid19vaccines.vaccine_id INNER JOIN covidvms_vaccinationcards ON " + cls.__table + ".nin_number = covidvms_vaccinationcards.citizen_nin_id"
+        sql += " WHERE " + cls.__vaccination_table + ".no_of_dozes = %s"
+        sql += " AND " + cls.__vaccination_table + ".citizen_nin_id = %s"
+
+        citizen_data = {}
+
+        data = pycsql.query(sql, [2, citizen])
+
+        if pycsql.not_empty(data):
+            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, district, sub_county, parish, village, phone_number, taken_at, next_doze_on, vaccination_center, name, card_epi, card_sn, batch_no in data:
+                citizen_data = {
                     "nin": nin_number,
                     "sur_name": sur_name,
                     "given_name": given_name,
                     "nationality": nationality,
                     "sex": gender,
-                    "dob": date_of_birth,
-                    "card_no": card_no,
-                    "expiry_date": expiry_date,
+                    "year": String.sub_str(date_of_birth, 0, 4),
+                    "district": district,
+                    "sub_county": sub_county,
+                    "parish": parish,
+                    "village": village,
                     "phone": phone_number,
-                    "email": email,
+                    "taken_at": taken_at,
+                    "next_doze_on": next_doze_on,
                     "vaccination_center": vaccination_center,
                     "vaccine_name": name,
-                    "taken_at": taken_at
+                    "card_epi": card_epi,
+                    "card_sn": card_sn,
+                    "batch_no": batch_no,
                 }
-
+        
         return citizen_data
 
 
@@ -203,13 +296,13 @@ class Ug(models.Model):
         managed = True
         db_table = 'covidvms_ug'
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def save_ug(self):
         self.save()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return super().__str__()
 
 
@@ -218,13 +311,13 @@ class Covid19Vaccines(models.Model):
     name = models.CharField(max_length=100)
     dozes = models.IntegerField(default=2)
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def save_vaccines(self):
         self.save()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return super().__str__()
 
 
@@ -247,31 +340,34 @@ class Covid19Vaccination(models.Model):
         managed = True
         db_table = 'covidvms_covid19vaccination'
 
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def save_vaccination(self):
         self.save()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return super().__str__()
 
+
+
     @classmethod
-    def register_first_doze(cls, data: dict, nin_id):
+    def vaccinate_citizen(cls, data: dict, nin_id):
         pycsql.where({'citizen_nin_id': nin_id})
 
         pycsql.update(data, "covidvms_covid19vaccination")
 
         return pycsql.affectedRows() > 0
 
+    
+    
     @classmethod
-    def register_second_doze(cls, data: dict, nin_id):
-        pycsql.where({'citizen_nin_id': nin_id})
-
-        pycsql.update(data, "covidvms_covid19vaccination")
-
+    def  create_vaccination_card(cls, data:dict):
+        pycsql.insertData(data, 'covidvms_vaccinationcards');
         return pycsql.affectedRows() > 0
-
+        
+        
+        
     @classmethod
     def district_partial_graph(cls):
         where = {'no_of_dozes': 1}
@@ -292,7 +388,7 @@ class Vaccination_centers(models.Model):
     center_id = models.AutoField(primary_key=True)
     center_name = models.CharField(max_length=100)
 
-    def __init_(self, *args, **kwargs) -> None:
+    def __init_(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def __str__(self):

@@ -22,7 +22,7 @@ class UserModel(models.Model):
     def save_user(self):
         self.save()
 
-    def __str__(self) -> str:
+    def __str__(self):
         return super().__str__()
 
     @classmethod
@@ -43,7 +43,7 @@ class UserModel(models.Model):
         Call set_current_user() method first and pass the session email
         :return: dict A dictionary of data for the current user
         """
-        data = dict()
+        data = {}
         column_key = "email"
 
         try:

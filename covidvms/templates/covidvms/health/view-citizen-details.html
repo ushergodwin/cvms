@@ -1,0 +1,101 @@
+{% extends '../base.html' %}
+
+{% block content %}
+{% load static %}
+        <div class="row mt-5 justify-content-center">
+                <div class="col-md-12 col-lg-12 col-xl-12">
+                    <div class="row justify-content-center">
+                        <div class="col-md-12 col-lg-8 col-xl-8">
+                            <div class="card card-body shadow text-dark">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <img src="{% static 'assets/images/photo-place-holder1.jpg'%}" class="img-responsive roundend" alt="{{citizen.sur_name}}" width="200" height="200"/>
+                                    </div>
+                                    <div class="col-lg-6 text-center">
+                                        <img src="{% static 'assets/images/republic-of-uganda.jpg'%}" class="img-responsive roundend" alt="Fag Map of Uganda" width="150" height="150"/>
+                                        <h4 class="font-weight-bold">REPUBLIC OF UGANDA</h4>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row mt-2">
+                                    <div class="col-lg-12">  
+                                            <div class="row justify-content-between">
+                                                <div class="mb-3">
+                                                    <h5>SURNAME</h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.1}}</p>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h5>GIVEN NAME</h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.2}}</p>
+                                                </div>
+                                                <div>
+                                                    <h5>NATIONALITY</h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.3}}</p>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-content-between">
+                                                <div>
+                                                    <h5>DISTRICT</h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.12}}</p>
+                                                </div>
+
+                                                <div>
+                                                    <h5>GENDER</h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.4}}</p>
+                                                </div>
+
+                                                <div>
+                                                    <h5>DATE OF BIRTH </h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.5}}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="row justify-content-between">
+                                                <div class="mb-3">
+                                                    <h5>NIN</h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.0}}</p>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <h5>CARD NUMBER</h5>
+                                                    <span class="font-weight-bold">{{ citizen.0.6}}</span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h5>PHONE NUMBER</h5>
+                                                    <span class="font-weight-bold">+{{ citizen.0.7}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-content-between">
+                                                <div class="mb-3">
+                                                    <h5>VILLAGE</h5>
+                                                    <p class="font-weight-bold">{{ citizen.0.8}}</p>
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <h5>PARISH</h5>
+                                                    <span class="font-weight-bold">{{ citizen.0.9}}</span>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h5>SUB COUNTY</h5>
+                                                    <span class="font-weight-bold">{{ citizen.0.11}}</span>
+                                                </div>
+                                            </div>
+                                            <div class="row justify-content-between">
+                                                <div class="mb-3">
+                                                    <h5>COUNTY: <span class="font-weight-bold">{{ citizen.0.10}}</span></h5>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <h5>EMAIL: <span class="font-weight-bold">{{ citizen.0.13}}</span></h5>
+                                                </div>
+                                            </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}

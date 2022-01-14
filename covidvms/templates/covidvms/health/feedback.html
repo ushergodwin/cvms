@@ -1,0 +1,32 @@
+{% extends 'covidvms/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="row mt-3">
+                {% for feedback in feedbacks %}
+
+                    <div class="col-md-4">
+                        <div class="card h-100">
+                            <div class="card-header">
+                                <h4>{{ feedback.feedback_type }}</h4>
+                            </div>
+                            <div class="card-body">
+                                <p>{{ feedback.side_effects }}</p>
+                            </div>
+
+                            <div class="card-footer">
+                                <p class="text-muted">
+                                    Raised By: {{ feedback.email}}, {{ feedback.phone_number}}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+       </div>
+</section>
+{% endblock %}

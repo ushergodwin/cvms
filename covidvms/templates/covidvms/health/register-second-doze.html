@@ -46,7 +46,13 @@
 
                                                 <div class="col-lg-6 col-xl-4">
                                                     <small>CARD NO</small>
-                                                    <span class="font-weight-bold">{{ citizen.card_no}}</span>
+                                                    <span class="font-weight-bold">
+                                                        {% if citizen.card_no == 0 %}
+                                                            N/A
+                                                        {% else %}
+                                                            {{ citizen.card_no}}
+                                                        {% endif %}
+                                                    </span>
                                                 </div>
                                             </div>
                                             <small>DATE OF EXPIRY </small>
@@ -81,6 +87,8 @@
                                         <div class="row justify-content-between">
                                             {% csrf_token %}
                                             <input type="hidden" name="citizen_nin_id" value="{{citizen.nin}}"/>
+                                            <input type="hidden" name="email" value="{{citizen.email}}"/>
+                                            <input type="hidden" name="vaccine_id" value="{{citizen.vaccine_id}}"/>
                                             <input type="hidden" name="register_second_doze" value="1"/>
                                             <button type="submit" class="btn btn-success" id="second-doze-btn">Give Second Dose <i class="fas fa-check-circle"></i></button>
                                             <a href="{% url 'covidvms:view_second_doze'%}" class="btn btn-warning">Cancel</a>

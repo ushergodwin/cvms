@@ -58,11 +58,19 @@
 
                                                 <div class="mb-3">
                                                     <h5>CARD NUMBER</h5>
-                                                    <span class="font-weight-bold">{{ citizen.0.6}}</span>
+                                                    <span class="font-weight-bold">
+                                                        {% if citizen.0.6 == 0 %}
+                                                            N/A
+                                                        {% else %}
+                                                            {{ citizen.0.6 }}
+                                                        {% endif %}
+                                                    </span>
                                                 </div>
                                                 <div class="mb-3">
                                                     <h5>PHONE NUMBER</h5>
-                                                    <span class="font-weight-bold">+{{ citizen.0.7}}</span>
+                                                    <span class="font-weight-bold">
+                                                        {{ citizen.0.7}}
+                                                    </span>
                                                 </div>
                                             </div>
                                             <div class="row justify-content-between">

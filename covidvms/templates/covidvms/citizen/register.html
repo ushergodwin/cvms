@@ -1,0 +1,173 @@
+{% extends '../base-index.html'%}
+
+{% block content %}
+
+{% load static %}
+        <section class="container-fluid">
+            <div class="row mt-5">
+                <div class="col-md-12 col-lg-4 col-xl-4 text-center">
+                    <h4 class="font-weight-bold">REPUBLIC OF UGANDA</h4>
+                    <img src="{% static 'assets/images/republic-of-uganda.jpg' %}" class="rounded"/>
+                </div>
+                <div class="col-md-12 col-lg-8 col-xl-8 mt-3">
+                    <h4>Register A Citizen</h4>
+                    
+                    <div class="card card-body shadow">
+                        <form action="{% url 'covidvms:register_citizen'%}" method="POST" id="addCitizenForm">
+                            <div class="first-row">
+                                <div class="row" id="">
+                                    <div class="col-md-12 col-lg-6 col-xl-6">
+                                        <div class="form-group">
+                                            <label for="surname"> Surname &nbsp; <i id="fname-notif"></i>
+                                                <input type="text" name="surname" id="surname" class="borderless" autocomplete="off" onkeyup="ValidateFname(this.value)" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-6 col-xl-6">
+                                        <div class="form-group">
+                                            <label for="givenname">Given Name &nbsp; <i id="lname-notif"></i>
+                                                <input type="text" name="givenname" id="givenname" onkeyup="ValidateLname(this.value)" class="borderless" autocomplete="off" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="nationality">Nationality 
+                                                <input type="text" name="nationality" list="nationale" id="nationality" class="borderless" autocomplete="off" required/>
+                                                <datalist id="nationale">
+                                                    <option value="">-- select --</option>
+                                                    <option value="UGANDAN">Uganda</option>
+                                                    <option value="KENYAN">Kenya</option>
+                                                </datalist>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="gender">Gender 
+                                                <select name="gender" class="borderless" required>
+                                                    <option value="">-- select gender --</option>
+                                                    <option value="M">Male</option>
+                                                    <option value="F">Female</option>
+                                                    <option value="Trans">Transgender</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="dob">Date of Birth
+                                                <input type="date" name="dob" id="dob" class="borderless" autocomplete="off" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="nin">NIN &nbsp; <i id="nin-notif"></i>
+                                                <input type="text" name="nin" id="nin" class="borderless" onkeyup="ValidateNIN(this.value)" autocomplete="off"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="other_id">Other ID <span class="text-muted">(applicable if you do not have a National ID)</span>
+                                                <input type="text" name="other_id"  class="borderless" autocomplete="off"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="card_no">Card No 
+                                                <input type="number" name="card_no" id="card-no" class="borderless" autocomplete="off"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="second-row">
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="expiry_date">Date of Expiry 
+                                                <input type="date" name="expiry_date" id="expiry-date" class="borderless" autocomplete="off" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="village">Village 
+                                                <input type="text" name="village" id="village" class="borderless" autocomplete="off" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="parish">Parish 
+                                                <input type="text" name="parish" id="parish" class="borderless" autocomplete="off" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="sub_county">Sub County 
+                                                <input type="text" name="sub_county" id="sub_county" class="borderless" autocomplete="off" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="county">County 
+                                                <input type="text" name="county" id="county" class="borderless" autocomplete="off" required/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-lg-4 col-xl-4">
+                                        <div class="form-group">
+                                            <label for="district">District 
+                                                <input type="text" name="district" list="dist_list" id="district" placeholder="-- select --" class="borderless" autocomplete="off" required/>
+                                                <datalist id="dist_list">
+                                                    {% for name in districts %}
+                                                        <option value="{{name.0}}">{{name.0}}</option>
+                                                    {% endfor %}
+                                                </datalist>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="row">
+                                    <div class="col-md-12 col-lg-6 col-xl-6">
+                                        <label for="tel"> Phone number &nbsp; <i id="phone-notif"></i>
+                                            <span class="d-flex w-100">+256  
+                                                <input type="number" onkeyup="ValidatePhoneNumber(this.value)" name="tel" id="phone" class="borderless" autocomplete="off" required/>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-12 col-lg-6 col-xl-6">
+                                        <label for="email"> Email Address (optional) &nbsp; <i id="email-notif"></i>
+                                            <input type="email" name="email" id="email" class="borderless" onkeyup="ValidateEmail(this.value)" autocomplete="off"/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <hr/>
+                                <div class="row justify-content-between">
+                                    <a href="/" class="btn btn-primary"> <i class="fas fa-home"></i> Back Home</a>
+                                    <input type="hidden" name="add_citizen" value="2"/>
+                                    {% csrf_token %}
+                                    <div class="response"></div>
+                                    <button type="submit" class="btn btn-success" id="add-citizen-btn">Register Me <i class="fas fa-arrow-circle-up"></i> </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+{% endblock %}

@@ -65,6 +65,10 @@ class FeedBack(models.Model):
     email = models.CharField(max_length=65)
     side_effects = models.TextField()
     sent_at = models.DateTimeField(default=timezone.now)
+    feedback_type = models.CharField(max_length=30, default='Vaccine Side Effects')
+    phone_number = models.CharField(max_length=14, default='')
+    vaccination_center = models.CharField(max_length=100, default='')
+    vaccine_name = models.CharField(max_length=50, default='')
 
     def create_feedback(self):
         self.save()

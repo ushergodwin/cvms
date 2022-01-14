@@ -1,4 +1,5 @@
 import json
+from multiprocessing import context
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 
@@ -8,18 +9,15 @@ from django.db.models import Sum
 
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
-from matplotlib import pyplot as plt
-from pycsql.core.manager import String
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from pycsql.core.manager import Notify, String
 from django.contrib.auth.models import User
 
-from covidvms.citizenmodel import Covid19Vaccination, Ug
-from covidvms.models import Auth
+from covidvms.citizenmodel import Covid19Vaccination, Covid19Vaccines, Ug, Vaccination_centers, CitizenModel
+from covidvms.models import Auth, FeedBack
 from covidvms.forms import Auth_form
 from covidvms.usermodel import UserModel
-from io import StringIO
 
+from pycsql.db.pycsql import pycsql
 
 # Create your views here.
 class Home:
@@ -70,6 +68,7 @@ class Home:
     
     @classmethod
     def show_vaccination_graphs(cls, request, stage):
+        
         if 'current' not in request.session.keys():
             return redirect('/')
 
@@ -83,59 +82,11 @@ class Home:
             "page": "ALL CITIZEN",
             "no_of_districts": len(Ug.objects.all())
         }
+        
         if stage == 'fully':
-           return render(request, 'covidvms/admin/fully-vaccinated-graph.html', context) 
+           return render(request, 'covidvms/admin/fully-vaccinated-graph.html', context)
+        
         return render(request, 'covidvms/admin/first-doze-graph.html', context)
-    
-    
-    
-    @classmethod
-    def show_bar(cls, request):
-        if 'current' not in request.session.keys():
-            return redirect('/')
-
-        current_user = request.session.get('current')
-        UserModel.set_current_user(current_user)
-
-        context = {
-            "title": 'Admin | Panel',
-            "user_email": current_user,
-            "page": Home.partial_graph(request),
-            "labels": ['vaccination_district__name'],
-            "data": ['vaccination_district__no_of_dozes'],
-            "graph2": Home.return_graph1(),
-            "queryset": Covid19Vaccination.objects.values('vaccination_district__name').annotate(
-                vaccination_district__no_of_dozes=Sum('no_of_dozes')).order_by('-vaccination_district__no_of_dozes')
-            # "page":Home.partial_graph(labels=[vaccination_district__name], data=[vaccination_district__no_of_dozes]) ,
-        }
-
-        return render(request, 'covidvms/admin/bar-graph.html', context)
-
-
-
-    @classmethod
-    def partial_graph(cls, request):
-        if 'current' not in request.session.keys():
-            return redirect('/')
-
-        current_user = request.session.get('current')
-        UserModel.set_current_user(current_user)
-        UserModel.set_current_user(request.session.get('current'))
-
-        labels = []
-        data = []
-
-        queryset = Covid19Vaccination.objects.values('vaccination_district__name').annotate(
-            vaccination_district__no_of_dozes=Sum('no_of_dozes')).order_by('-vaccination_district__no_of_dozes')
-        for entry in queryset:
-            labels.append(entry['vaccination_district__name'])
-            data.append(entry['vaccination_district__no_of_dozes'])
-
-        return JsonResponse({
-            'labels': labels,
-            'data': data,
-        })
-
 
 
     @classmethod
@@ -212,23 +163,47 @@ class Home:
             else:
                 return HttpResponse(json.dumps({"status": "Invalid email or password"}))
 
-
-
+    
+    
     @classmethod
-    def return_graph1(cls):
-        fig = plt.figure()
-        graph = fig.add_subplot(1, 2, 1,
-                                title="Sample Bar Graph Showing Percentages of Vaccinated Citizens",
-                                ylabel="Vaccination (in percentage %)",
-                                xlabel="Population (in million)")
-        x = [20, 14, 16, 15, 15, 10, 8, 6, 4, 1]
-        y = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-        graph.bar(x, y)
-        # plt.style.use('fivethirtyeight')
-        plt.plot()
-        plt.close()
-        imgdata = StringIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)
-
-        return imgdata.getvalue()
+    def show_feedback(cls, request):
+        context = {
+            'title': 'CVMS | COVID 19 VACCINATION FEEDBACK',
+            'vaccines': Covid19Vaccines.objects.all(),
+            'centers': Vaccination_centers.objects.all()
+        }
+        
+        return render(request, 'covidvms/citizen/feedback.html', context)
+    
+    
+    @classmethod
+    def save_feedback(cls, request):
+        feedback_type = request.POST.get('feedback_type')
+        vaccine_name = 'N/A' if not request.POST.get('vaccine_name') else request.POST.get('vaccine_name')
+        vaccine_center = 'N/A' if not request.POST.get('vaccine_center') else request.POST.get('vaccine_center')
+        email = request.POST.get('email')
+        phone_number = request.POST.get('phone_number')
+        feedback = request.POST.get('feedback')
+        
+        sql = "SELECT nin_number FROM covidvms_citizenmodel WHERE email = %s OR phone_number = %s LIMIT 1"
+        nin_number = pycsql.query(sql, query_data=[email, phone_number])
+        if len(nin_number) < 1:
+            return HttpResponse(Notify.info("You can not provide feedback beacuse your are not registed. Please register in order to provide feedback"))
+        
+        feedbackObj = FeedBack.objects.create(feedback_type=feedback_type, vaccination_center=vaccine_center, vaccine_name=vaccine_name, email=email, phone_number=phone_number, side_effects=feedback)
+        
+        feedbackObj.save()
+        
+        return HttpResponse(Notify.info("Your feedback has been submitted successfully. Thank you for your response.")) 
+    
+    
+    @classmethod
+    def show_citizen_registration_form(cls, request):
+        
+        context = {
+            'title': "CVMS | SELF REGISTRATION",
+            "districts": CitizenModel.get_districts()
+        }
+        
+        return render(request, 'covidvms/citizen/register.html', context)
+    

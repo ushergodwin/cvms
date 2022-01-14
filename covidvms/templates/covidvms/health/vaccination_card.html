@@ -112,18 +112,29 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr>
-                                                        <td>1 <sup>st</sup> Dose</td>
-                                                        <td>{{ citizen.taken_at }}</td>
-                                                        <td>{{ citizen.vaccine_name }}</td>
-                                                        <td>{{ citizen.vaccination_center }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>2 <sup>st</sup> Dose</td>
-                                                        <td>{{ citizen.next_doze_on }}</td>
-                                                        <td>{{ citizen.vaccine_name }}</td>
-                                                        <td>{{ citizen.vaccination_center }}</td>
-                                                    </tr>
+                                                    {% if citizen.dozes == 1 %}
+                                                        <tr>
+                                                            <td>1 <sup>st</sup> & last Dose</td>
+                                                            <td>{{ citizen.taken_at }}</td>
+                                                            <td>{{ citizen.vaccine_name }}</td>
+                                                            <td>{{ citizen.vaccination_center }}</td>
+                                                        </tr>
+
+                                                    {% else %}
+                                                        <tr>
+                                                            <td>1 <sup>st</sup> Dose</td>
+                                                            <td>{{ citizen.taken_at }}</td>
+                                                            <td>{{ citizen.vaccine_name }}</td>
+                                                            <td>{{ citizen.vaccination_center }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>2 <sup>st</sup> Dose</td>
+                                                            <td>{{ citizen.next_doze_on }}</td>
+                                                            <td>{{ citizen.vaccine_name }}</td>
+                                                            <td>{{ citizen.vaccination_center }}</td>
+                                                        </tr>
+
+                                                    {% endif %}
                                                 </tbody>
                                             </table>
                                             <div class="d-flex justify-content-end">

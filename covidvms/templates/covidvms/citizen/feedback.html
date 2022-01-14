@@ -1,0 +1,107 @@
+{% extends 'covidvms/base-index.html' %}
+{% load static %}
+
+{% block content %}
+<style type="text/css">
+.feedbackForm {
+    border: 3px solid rgb(8, 194, 8);
+    border-right: none; border-top: none; border-bottom: none;
+    padding: 10px 5px 10px;
+}
+</style>
+<section class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card card-body shadow">
+                <a href="/">
+                    <img src="{% static 'assets/images/logo-MOH.png' %}" class="card-img-top"/>
+                </a>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <h4>Why Provide FeedBack?</h4>
+                        <h5 class="text-muted">
+                            Hello dear Citizen, Please take your time to provide feed back to us at Ministry of Health. <br/>
+                            The information you provide to us like side effetcts of the vaccine taken, behavior of health works at the vaccination centers, will help us to monitor, and treat the side effetcts, and improve service delivery to you. <br/> <br/>
+                            <span class="text-info">The personal information that you submit including your email address, phone number is not shared with any private insitutes or whatsover, for privacy protection</span> <br/> <br/>
+                            <input type="checkbox" class="custom-checkbox" id="consent"/> I Agree with Terms & Conditions
+                            <br/>
+                            <span id="consent-error" class="text-danger mt-2"></span>
+                        </h5>
+                    </div>
+                    <div class="col-lg-6 feedbackForm">
+                        <form action="" method="POST" id="feedbackForm" class="mt-2"
+                         data-url="{% url 'covidvms:save_feedback' %}">
+                         {% csrf_token %}
+                            <div class="form-group">
+                                <label for="feedback_type" class="w-100">
+                                    Type of FeedBack
+                                    <select name="feedback_type" class="form-control" id="feedback-type" required>
+                                        <option value="">-- select --</option>
+                                        <option value="Vaccine Side Effects">Vaccine Side Effects</option>
+                                        <option value="Health Workers Behavior">Health Workers Behavior</option>
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="form-group v-center d-none">
+                                <label for="vaccine_center" class="w-100">
+                                    Vaccination Center Name 
+                                    <input type="text" name="vaccine_center" class="form-control" list="v-centers">
+                                    <datalist id="v-centers">
+                                        {% for center in centers %}
+                                            <option value="{{ center.center_name }}">{{ center.center_name }}</option>
+                                        {% endfor %}
+                                    </datalist>
+                                </label>
+                            </div>
+                            <div class="form-group v-name">
+                                <label for="vaccine_name" class="w-100">
+                                    Vaccine Name 
+                                    <select name="vaccine_name" class="form-control">
+                                        <option value="">-- select --</option>
+                                        {% for vaccine in vaccines %}
+                                            <option value="{{ vaccine.name }}">{{ vaccine.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="email" class="w-100">
+                                            Email 
+                                            <input type="email" name="email" class="form-control" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="phone_number" class="w-100">
+                                            Phone Number
+                                            <input type="text" name="phone_number" class="form-control" required/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="feedback" class="w-100">
+                                    FeedBack 
+                                    <textarea name="feedback" class="form-control" placeholder="type your feed back here" rows="8" onkeyup="wordCount(this.value)" required></textarea>
+                                    <div class="row justify-content-end mr-5">
+                                        <span class="text-muted">Minimun Characters <span id="words-left">100</span> </span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-success" id="submit-btn" disabled>Submit Your FeedBack</button>
+                            </div>
+                            <div class="response fixed-top" id="response">
+                                
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

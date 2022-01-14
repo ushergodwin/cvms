@@ -95,19 +95,9 @@ class CitizenModel(models.Model):
 
 
     @classmethod
-    def citizen_exits(cls, where=None):
-        res = False
-        if where is None:
-            where = {}
-        try:
-
+    def citizen_exits(cls, where={}):
             pycsql.where(where)
-
-            citizen_nin = pycsql.getOneValue('sur_name', cls.__table)
-            res = True if citizen_nin != "" and type(citizen_nin) is not bool else res
-        except Exception as e:
-            res = e
-        return res
+            return len(pycsql.getAll('sur_name', cls.__table)) > 0
 
 
 
@@ -196,7 +186,7 @@ class CitizenModel(models.Model):
 
         columns = (
             "nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, "
-            "phone_number, email " + ", taken_at, vaccination_center, name "
+            "phone_number, email " + ", taken_at, vaccination_center, vaccine_id, name "
         )
 
 
@@ -212,13 +202,13 @@ class CitizenModel(models.Model):
         data = pycsql.query(sql, [1, citizen])
 
         if pycsql.not_empty(data):
-            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, taken_at, vaccination_center, name in data:
+            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, card_no, expiry_date, phone_number, email, taken_at, vaccination_center, vaccine_id, name in data:
                 citizen_data = {
                     "nin": nin_number,"sur_name": sur_name,"given_name": given_name,
                     "nationality": nationality,"sex": gender,"dob": date_of_birth,
                     "card_no": card_no,"expiry_date": expiry_date,"phone": phone_number,
                     "email": email,"vaccination_center": vaccination_center,
-                    "vaccine_name": name,"taken_at": taken_at
+                    "vaccine_id": vaccine_id, "vaccine_name": name,"taken_at": taken_at
                 }
 
         return citizen_data
@@ -248,7 +238,7 @@ class CitizenModel(models.Model):
     def vaccination_card(cls, citizen):
         
         columns = (
-            "nin_number, sur_name, given_name, nationality, gender, date_of_birth, district, sub_county, parish, village, phone_number, taken_at, next_doze_on, vaccination_center, name, card_epi, card_sn, batch_no"
+            "nin_number, sur_name, given_name, nationality, gender, date_of_birth, district, sub_county, parish, village, phone_number, taken_at, next_doze_on, vaccination_center, dozes, name, card_epi, card_sn, batch_no"
         )
 
         sql = "SELECT " + columns + " FROM " + cls.__table + " INNER JOIN " + cls.__vaccination_table
@@ -263,7 +253,7 @@ class CitizenModel(models.Model):
         data = pycsql.query(sql, [2, citizen])
 
         if pycsql.not_empty(data):
-            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, district, sub_county, parish, village, phone_number, taken_at, next_doze_on, vaccination_center, name, card_epi, card_sn, batch_no in data:
+            for nin_number, sur_name, given_name, nationality, gender, date_of_birth, district, sub_county, parish, village, phone_number, taken_at, next_doze_on, vaccination_center, dozes, name, card_epi, card_sn, batch_no in data:
                 citizen_data = {
                     "nin": nin_number,
                     "sur_name": sur_name,
@@ -279,6 +269,7 @@ class CitizenModel(models.Model):
                     "taken_at": taken_at,
                     "next_doze_on": next_doze_on,
                     "vaccination_center": vaccination_center,
+                    "dozes": dozes,
                     "vaccine_name": name,
                     "card_epi": card_epi,
                     "card_sn": card_sn,

@@ -14,13 +14,16 @@ from pycsql.core.manager import Password
 from pycsql.db.pycsql import pycsql
 from covidvms.citizenmodel import CitizenModel, Covid19Vaccines, Ug, Vaccination_centers, Covid19Vaccination
 from covidvms.usermodel import UserModel
-from io import StringIO
 
-plt.switch_backend('agg')
+from django.views.generic import TemplateView
+from django.core.mail import send_mail
+import smtplib
+from decouple import config as env
+from covidvms.models import FeedBack
 
 
 # Register your models here.
-class Health:
+class Health(TemplateView):
 
 
     @classmethod
@@ -39,34 +42,6 @@ class Health:
             "districts": CitizenModel.get_districts()
         }
         return render(request, 'covidvms/health/dashboard.html', context)
-
-
-
-    @classmethod
-    def return_graph(cls):
-        fig = plt.figure()
-        graph = fig.add_subplot(1, 2, 1,
-                                title="Sample Bar Grap Showing Percentages of Vaccinated Citizens",
-                                ylabel="Vaccination (in percentage %)",
-                                xlabel="Population (in million)")
-        x = [20, 14, 16, 15, 15, 10, 8, 6, 4, 1]
-        y = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
-        graph.bar(x, y)
-        # plt.style.use('fivethirtyeight')
-        plt.plot()
-        plt.close()
-        imgdata = StringIO()
-        fig.savefig(imgdata, format='svg')
-        imgdata.seek(0)
-
-        return imgdata.getvalue()
-
-    @classmethod
-    def vaccination_chart(cls, request, limit):
-        labels = ["Kampala", "Wakiso", "Jinja", "Entebbe", "Masaka", "Kabale", "Mbarara", "Kasese"]
-        data = [20000000, 10000000, 15000000, 5000000, 8000000, 9000000, 12000000, 4000000]
-        return JsonResponse({'labels': labels, 'data': data})
-
 
 
     @classmethod
@@ -128,6 +103,9 @@ class Health:
 
         if request.method != "POST" or not request.POST.get('add_citizen'):  # here
             return HttpResponse(Notify.info("Request not recognized"))
+        
+        requested_by = request.POST.get('add_citizen')
+        
         surname = String.trim(request.POST.get('surname'))
         given_name = String.trim(request.POST.get('givenname'))
         nationality = String.trim(request.POST.get('nationality'))
@@ -143,9 +121,11 @@ class Health:
         district = String.trim(request.POST.get('district'))
         phone_number = String.trim(request.POST.get('tel'))
         email_address = String.trim(request.POST.get('email'))
-
+        
+        nin_number = String.trim(request.POST.get('other_id')) if len(nin_number) < 1 else nin_number
+        
         citizenInput = [surname,given_name,nationality,gender,date_of_birth,nin_number,
-            card_no,expiry_date,village,parish,sub_county,county,district,phone_number,email_address
+        expiry_date,village,parish,sub_county,county,district,phone_number,email_address
         ]
 
         if not String.is_not_empty(citizenInput):
@@ -162,13 +142,12 @@ class Health:
 
         # check if user exists
         where_data = {
-            "nin_number": nin_number,
-            "card_no": card_no,
-            "email": email_address
+            "nin_number": nin_number
         }
 
         if CitizenModel.citizen_exits(where_data):
             return HttpResponse(Notify.failure("Citizen already exits!! Please enter another citizen."))
+        
         insert_citizen = CitizenModel.add_citizen(citizen_data)
 
         if not insert_citizen:
@@ -198,7 +177,10 @@ class Health:
 
         # create the citizen's account automatically
         CitizenModel.create_citizen_account(citizen_account_info)
-        return HttpResponse(Notify.success("Citizen added successfully"))
+        
+        message = "Citizen added successfully" if requested_by == 1 else "You have been registered successfully. Please go to the nearest center to receive the first doze of the vaccine of your choice. Thank you."
+        
+        return HttpResponse(Notify.success(message))
 
 
 
@@ -285,24 +267,45 @@ class Health:
         if request.method != "POST" and not request.POST.get('register_first_doze'):
             return HttpResponse(
                 Notify.failure("An error occurred while processing your request. Please contact the site admin."))
-
+            
+        vaccine_id  = request.POST.get('vaccine')
+        pycsql.where({'vaccine_id': vaccine_id})
+        no_of_shots = int(pycsql.getOneValue('dozes', 'covidvms_covid19vaccines'))
+        
+        doze_status = "FULLY" if no_of_shots == 1 else "PARTIAL"
+        no_of_dozes = 2 if no_of_shots == 1 else 1
+         
+        citizen_nin_id = request.POST.get('citizen_nin_id')
+        
+        card_data = {
+            "card_epi": "HMIS EPI " + String.to_string(Math.random_number(0, 99999)),
+            "card_sn": String.to_string(Math.random_number(0, 99999999)),
+            "batch_no": String.to_string(Math.random_number(0, 99999)) + "BD",
+            "citizen_nin_id": citizen_nin_id
+        }
+        
         doze_data = {
-            "no_of_dozes": 1,
+            "no_of_dozes": no_of_dozes,
             "taken_at": request.POST.get('taken_date') + " " + String.to_string(datetime.time(datetime.now())),
             "next_doze_on": request.POST.get('next_doze_date') + " " + String.to_string(datetime.time(datetime.now())),
             "vaccine_type_id": request.POST.get('vaccine'),
             "vaccination_center": request.POST.get('center'),
-            "vaccination_district_id": request.POST.get('dist_id')
+            "vaccination_district_id": request.POST.get('dist_id'),
+            "doze_status": doze_status
         }
-
-        citizen_nin_id = request.POST.get('citizen_nin_id')
-
+                
         if not Covid19Vaccination.vaccinate_citizen(doze_data, citizen_nin_id):
             return HttpResponse(
                 Notify.failure("Something went wrong while processing the request. Please try again later!"))
-
+            
+             
         # notify user for the next doze by email or phone number
-
+        pycsql.where({'vaccine_id': vaccine_id})
+        vaccine_name = pycsql.getOneValue('name', 'covidvms_covid19vaccines')
+        message = "Hello Citizen, you have today " + String.to_string(datetime.now())
+        
+        cls.send_vaccination_email(no_of_dozes=no_of_dozes, vaccine_name=vaccine_name, message=message, card_data=card_data, next_doze_date=request.POST.get('next_doze_date'), email=request.POST.get('email'))
+        
         return HttpResponse(Notify.success("Citizen registered for the first doze successfully"))
 
 
@@ -351,8 +354,10 @@ class Health:
             return HttpResponse(
                 Notify.failure("An error occurred while processing your request. Please contact the site admin."))
 
+        no_of_dozes = 2
+        
         doze_data = {
-            "no_of_dozes": 2,
+            "no_of_dozes": no_of_dozes,
             "doze_status": "FULLY"
         }
         
@@ -371,13 +376,33 @@ class Health:
                 Notify.failure("Something went wrong while processing the request. Please try again later!"))
 
         # notify user for the next doze by email or phone number
-        if not Covid19Vaccination.create_vaccination_card(card_data):
-              return HttpResponse(
-                Notify.failure("Failed to create a vaccination card!.Please try again later!"))
- 
+        vaccine_id = request.POST.get('vaccine_id')
+        pycsql.where({'vaccine_id': vaccine_id})
+        vaccine_name = pycsql.getOneValue('name', 'covidvms_covid19vaccines')
+        message = "Hello Citizen, you have today " + String.to_string(datetime.now())
+        
+        cls.send_vaccination_email(no_of_dozes=no_of_dozes, vaccine_name=vaccine_name, message=message, card_data=card_data, next_doze_date=request.POST.get('next_doze_date'), email=request.POST.get('email'))
+    
         return HttpResponse(Notify.success("Citizen registered for the second doze successfully"))
     
     
+    
+    @classmethod
+    def send_vaccination_email(cls, no_of_dozes, vaccine_name, message, card_data, next_doze_date, email):
+        if no_of_dozes == 2:
+                    # create a vaccination card for those receiving jj
+            Covid19Vaccination.create_vaccination_card(card_data)
+            message += " received and completed the " + vaccine_name + " Vaccine. Please continue to observe the SOPs as directed by the Ministry of Health. Thank you."
+        else:
+            message += " received the first doze of " + vaccine_name + ". Your booster doze will be taken on " + next_doze_date + ". Please note this date for your reference. Thank you."
+        
+
+        #send_mail("COVID 19 VACCINATION", message, from_email=None, recipient_list=[email], fail_silently=False)
+        
+        mail = smtplib.SMTP_SSL(env("EMAIL_HOST"), env("EMAIL_PORT"))
+        mail.login(env("EMAIL_HOST_USER"), env("EMAIL_HOST_PASSWORD"))
+        mail.sendmail(env("DEFAULT_FROM_EMAIL"), email, message)
+        mail.quit()
     
     @classmethod
     def fully_vaccinated(cls, request):
@@ -426,7 +451,39 @@ class Health:
             "citizen_len": max(len(citizen_data), 0),
         }
         return render(request, 'covidvms/health/vaccination_card.html', context)
+    
+    
+    
+    @classmethod
+    def display_feedback(cls, request):
+        if 'current' not in request.session.keys():
+            return redirect('/')
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
 
+        context = {
+            "title": 'CVMS | CITIZEN FEEDBACK',
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "feedbacks": FeedBack.objects.all().order_by('-sent_at')
+        }
+        return render(request, 'covidvms/admin/feedback.html', context)
+
+
+    @classmethod
+    def display_feedback_for_staff(cls, request):
+        if 'current' not in request.session.keys():
+            return redirect('/')
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+
+        context = {
+            "title": 'CVMS | CITIZEN FEEDBACK',
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "feedbacks": FeedBack.objects.filter(feedback_type='Vaccine Side Effects')
+        }
+        return render(request, 'covidvms/health/feedback.html', context)
 
 admin.site.register(Covid19Vaccines)
 admin.site.register(Ug)

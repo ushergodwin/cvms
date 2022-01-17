@@ -86,10 +86,12 @@ class CitizenModel(models.Model):
     
     
     @classmethod
-    def get_citizen_by_id(cls, citizen):
+    def get_citizen_by_id(cls, citizen, is_email=False):
+        colum_key = "email" if is_email else "nin_number"
+        
         columns = "nin_number, sur_name, given_name, nationality, gender, date_of_birth," \
                   "card_no, phone_number, village, parish, county, sub_county, district, email"
-        pycsql.where({"nin_number": citizen})
+        pycsql.where({colum_key: citizen})
         return pycsql.getOneRow(columns, cls.__table)
 
 

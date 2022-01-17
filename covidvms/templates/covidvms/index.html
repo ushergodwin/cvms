@@ -2,7 +2,6 @@
 {% load static %}
 {% block content %}
 
-
 <script>
     jQuery(()=> {
         $("#v-card-btn").on('click', ()=> {
@@ -14,11 +13,21 @@
             let url = "health/citizen/vaccination/card/"+ nin;
             window.open(url, '_blank', 'popup');
         });
+        $("#d-card-btn").on('click', function(){
+            let nin = $("#nin_number").val();
+            if(nin.length < 10 )
+            {
+                alert("Invalid Identification Number"); return;
+            }
+            let url = "health/citizen/vaccination_card/download/"+ nin;
+            window.open(url, '_self');
+            $(this).attr('disabled', true);
+            $(this).html("<span class='spinner-border spinner-border-sm'> </span> Please wait...");
+        });
     });
 </script>
 <main class="container">
-<br/>
-<div class="row justify-content-center mt-5">
+<div class="row justify-content-center mt-2">
 <div class="col-md-12 col-lg-12 col-xl-12">
 <div class="card card-body shadow">
     <img src="{% static 'assets/images/logo-MOH.png' %}" class="card-img-top"/>
@@ -30,11 +39,10 @@
                 <span class="text-info">Other ID</span>
                 <input type="text" class="form-control" id="nin_number"/>
             </label>
-            <button type="button" class="btn btn-success" id="v-card-btn">Get My Vaccination Card</button>
-            <h4 class="mt-3"><b>FeedBack on Vaccination?</b></h4>
-            <a href="{% url 'covidvms:show_feedback' %}" class="btn btn-info">Give FeedBack</a>
-            <h4 class="mt-3"><b>SELF REGISTRATION?</b></h4>
-            <a href="{% url 'covidvms:show_citizen_registration_form' %}" class="btn btn-info">REGISTER ME</a>
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-success" id="v-card-btn">View Card</button>
+            <button type="button" class="btn btn-success mt-1" id="d-card-btn">Download Card</button>
+            </div>
         </div>
         <div class="col-md-12 col-lg-4 col-xl-4">
             <h4 class="font-weight-bold">LOGIN</h4>
@@ -65,7 +73,7 @@
         <div class="col-md-12 col-lg-4 col-xl-4">
             <div class="card card-body border-0">
                 <div class="row justify-content-center">
-                    <img src="{% static 'assets/images/Covid-19 (1).jpg' %}" class="rounded-circle" width="60%" height="200"/>
+                    <img src="{% static 'assets/images/Covid-19 (1).jpg' %}" class="rounded-circle" width="40%" height="130"/>
                 </div>
                 <div class="row justify-content-center">
                     <h1 class="font-weight-bold text-success">CVMS <i class="fas fa-check-circle"></i> </h1>

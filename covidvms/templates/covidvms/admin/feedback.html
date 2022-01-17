@@ -20,7 +20,7 @@
 
                             <div class="card-footer">
                                 <p class="text-muted">
-                                    Raised By: {{ feedback.email}}, {{ feedback.phone_number}}
+                                    Raised By: <a href="{% url 'covidvms:admin_view_citizen_by_email' feedback.email %}">{{ feedback.email}}</a>, {{ feedback.phone_number}}
                                 </p>
                             </div>
                         </div>

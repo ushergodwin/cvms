@@ -21,7 +21,11 @@ import smtplib
 from decouple import config as env
 from covidvms.models import FeedBack
 
-
+from django.core.files.storage import FileSystemStorage
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML, CSS
+from django.conf import settings
 # Register your models here.
 class Health(TemplateView):
 
@@ -219,6 +223,38 @@ class Health(TemplateView):
         return render(request, 'covidvms/health/view-citizen-details.html', context)
     
     
+    @classmethod
+    def view_citizen_by_email(cls, request, citizen): 
+        if 'current' not in request.session.keys():
+            return redirect('/')
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+
+        context = {
+            "title": 'CVMS | CITIZEN VIEW ' + citizen,
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "page": {"active": citizen, "nav": "CITIZEN"},
+            "citizen": CitizenModel.get_citizen_by_id(citizen, is_email=True)
+        }
+        return render(request, 'covidvms/health/view-citizen-details.html', context)
+    
+    
+    @classmethod
+    def admin_view_citizen_by_email(cls, request, citizen): 
+        if 'current' not in request.session.keys():
+            return redirect('/')
+        current_user = request.session.get('current')
+        UserModel.set_current_user(current_user)
+
+        context = {
+            "title": 'CVMS | CITIZEN VIEW ' + citizen,
+            "user_name": UserModel.userdata()['fname'],
+            "user_email": current_user,
+            "page": {"active": citizen, "nav": "CITIZEN"},
+            "citizen": CitizenModel.get_citizen_by_id(citizen, is_email=True)
+        }
+        return render(request, 'covidvms/admin/view-citizen-details.html', context)
     
     @classmethod
     def view_first_doze(cls, request):
@@ -450,8 +486,39 @@ class Health(TemplateView):
             "citizen": citizen_data,
             "citizen_len": max(len(citizen_data), 0),
         }
+        
         return render(request, 'covidvms/health/vaccination_card.html', context)
     
+    
+    
+    
+    @classmethod
+    def download_vaccination_card_pdf(cls, request, citizen):
+        citizen_data = CitizenModel.vaccination_card(citizen)
+
+        context = {
+            "title": 'CVMS | CITIZEN VACCINATION CARD',
+            "citizen": citizen_data,
+        }
+        
+        if max(len(citizen_data), 0) == 0:
+            return HttpResponse("<script> alert('You do not have a vaccination card to download. Please vaccinate and complete your dozes to get the vaccination card. Thank you.'); window.history.back();</script>")
+        
+        html_string = render_to_string('covidvms/health/print_v_card.html', context)
+
+        html = HTML(string=html_string, base_url=request.build_absolute_uri())
+        base_path = String.to_string(settings.BASE_DIR)
+        file_name = String.to_lower(citizen_data['sur_name']) + '\'s vaccination_card.pdf'
+        target =  base_path + '/covidvms/static/cards/' + file_name
+        html.write_pdf(target=target,stylesheets=[CSS(base_path +  '/covidvms/static/assets/bootstrap/css/bootstrap.min.css')])
+        
+        fs = FileSystemStorage(base_path + '/covidvms/static/cards')
+        with fs.open(file_name) as pdf:
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = "attachment; filename={}".format(file_name)
+            return response
+        
+        
     
     
     @classmethod
@@ -481,7 +548,8 @@ class Health(TemplateView):
             "title": 'CVMS | CITIZEN FEEDBACK',
             "user_name": UserModel.userdata()['fname'],
             "user_email": current_user,
-            "feedbacks": FeedBack.objects.filter(feedback_type='Vaccine Side Effects')
+            "feedbacks": FeedBack.objects.filter(feedback_type='Vaccine Side Effects'),
+            "page": {"active": "SIDE EFFECTS", "nav": "VACCINATION"},
         }
         return render(request, 'covidvms/health/feedback.html', context)
 

@@ -19,7 +19,26 @@
 </head>
 <body>
 <div class="se-pre-con"></div>
+<nav class="navbar navbar-expand-md navbar-light bg-light shadow sticky-top">
+    <a href="/" class="navbar-brand">
+        <img src="{% static 'assets/images/republic-of-uganda.jpg' %}" height="50" alt="logo" 
+        class="rounded"> CVMS
+    </a>
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+        <span class="navbar-toggler-icon"></span>
+    </button>
 
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <div class="navbar-nav">
+            <a href="/" class="nav-item nav-link active">Home</a>
+            <a href="{% url 'covidvms:show_feedback' %}" class="nav-item nav-link">Give FeedBack?</a>
+            <a href="{% url 'covidvms:show_citizen_registration_form' %}" class="nav-item nav-link">Self Registration?</a>
+        </div>
+        <div class="navbar-nav ml-auto">
+            <a href="/" class="nav-item nav-link">Login</a>
+        </div>
+    </div>
+</nav>
 {% block content %}
 
 {% endblock %}

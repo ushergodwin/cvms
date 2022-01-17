@@ -28,19 +28,8 @@
 
 </head>
 <body>
-        <div class="container mt-3 d-none card-error" data-citizen="{{ citizen_len }}">
-            <div class="row justify-content-center">
-                <div class="alert alert-danger">
-                    <span><b><i class="fas fa-exclamation-triangle"></i></b>
-                        &nbsp; You do not have a vaccination card. This results from either the following.<br/>
-                        1. Your card is not yet ready <br/>
-                        2. You have not yet completed your dozes <br/>
-                        3. You have not received a vaccine at all. <br/>
-                    </span>
-                </div>
-            </div>
-        </div>
-        <div class="container v-card-container d-none" onclick="window.print()">
+        <div class="container mt-3 card-error" data-citizen="{{ citizen_len }}">
+        <div class="container v-card-container " onclick="window.print()">
             <div class="row mt-5 justify-content-center">
                 <div class="col-md-12 col-lg-12 col-xl-12">
                     <div class="row justify-content-center">
@@ -141,13 +130,7 @@
                 </div>
             </div>
         </div>
-        <div class="fixed-bottom print-notification d-none">
-            <div class="alert alert-success">
-                <span><b><i class="fas fa-check-circle"></i></b> &nbsp; Click on the vaccination card if you want to print it
-                     or save it as a PDF!</span>
-            </div>
-        </div>
-        </div>
+</div>
 <script>
     $(document).ready(()=> {
         $(".se-pre-con").fadeOut("slow");
